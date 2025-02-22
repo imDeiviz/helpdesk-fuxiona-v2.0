@@ -3,15 +3,15 @@ const User = require("../models/user.model");
 
 module.exports.create = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, office } = req.body;
 
-    // Validar que se proporcionen name, email y password
-    if (!name || !email || !password) {
-      throw createError(400, "Name, email y password son requeridos");
+    // Validar que se proporcionen name, email, password y office
+    if (!name || !email || !password || !office) {
+      throw createError(400, "Name, email, password y office son requeridos");
     }
 
     // Crear un nuevo usuario
-    const newUser = new User({ name, email, password });
+    const newUser = new User({ name, email, password, office });
     await newUser.save();
 
     res.status(201).json({ message: "Usuario creado exitosamente" });
@@ -21,10 +21,10 @@ module.exports.create = async (req, res, next) => {
 };
 
 module.exports.register = async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, office } = req.body;
 
   try {
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({ name, email, password, role, office });
     res.status(201).json(user);
   } catch (error) {
     if (error.code === 11000) {
@@ -47,12 +47,12 @@ module.exports.profile = (req, res, next) => {
       }
       res.json({ 
         name: user.name,
-        email: user.email
+        email: user.email,
+        office: user.office // Include office in the profile response
       });
     })
     .catch(err => next(err));
 };
-
 
 module.exports.getProfile = (req, res, next) => {
   res.status(200).json(req.user);

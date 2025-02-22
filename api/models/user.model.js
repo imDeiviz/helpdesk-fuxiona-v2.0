@@ -51,7 +51,13 @@ const userSchema = new mongoose.Schema(
         },
       },
     },
-    role: { type: String, enum: ["user", "admin"], default: "user" }
+    role: { type: String, enum: ["user", "admin"], default: "user" },
+    office: {
+      type: String,
+      required: [true, "Office is required"]
+    }
+
+
   },
   {
     timestamps: true,

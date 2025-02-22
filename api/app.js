@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 /* Configuración de la sesión */
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: process.env.SESSION_SECRET || 'PB5^H8f&v$_Nn7q~4r,Ksk',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Asegúrate de que 'secure' esté en 'false' si estás desarrollando en localhost sin HTTPS
