@@ -32,25 +32,6 @@ const userSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid password!`,
       },
     },
-    avatar: {
-      type: String,
-      default: function () {
-        return `https://i.pravatar.cc/350?u=${this.email}`;
-      },
-      validate: {
-        validator: function (avatar) {
-          try {
-            new URL(avatar);
-            return true;
-          } catch (e) {
-            return false;
-          }
-        },
-        message: function () {
-          return "Invalid avatar URL";
-        },
-      },
-    },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     office: {
       type: String,
