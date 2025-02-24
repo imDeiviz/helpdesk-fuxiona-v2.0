@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb+srv://dmrojassantana:mcXqOnlztBPqLlp7@fuxionahelpdesk.28xum.mongodb.net/";
 
+
 mongoose
   .connect(MONGODB_URI)
   .then(() =>

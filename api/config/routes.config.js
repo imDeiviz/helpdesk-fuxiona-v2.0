@@ -3,10 +3,16 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const createError = require("http-errors");
 const usersRoutes = require('../routes/users.routes');
+const incidentsRoutes = require('../routes/incidents.routes');
+
+
 const sessionsRoutes = require('../routes/sessions.routes');
 const sessionMiddleware = require("../middlewares/session.middleware");
 
 router.use('/users', usersRoutes);
+router.use('/incidents', incidentsRoutes);
+
+
 router.use('/sessions', sessionsRoutes);
 
 router.use((req, res, next) => {
