@@ -63,6 +63,66 @@ app.listen(port, () => console.info(`Application running at port ${port}`));
 module.exports = app;
 ```
 
+### `config/db.config.js`
+Este archivo maneja la conexión a la base de datos MongoDB.
+
+```javascript
+const mongoose = require("mongoose");
+
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb+srv://dmrojassantana:mcXqOnlztBPqLlp7@fuxionahelpdesk.28xum.mongodb.net/";
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() =>
+    console.info(`Successfully connected to the database ${MONGODB_URI}`)
+  )
+  .catch((error) => {
+    console.error(
+      `An error occurred trying to connect to the database ${MONGODB_URI}`,
+      error
+    );
+    process.exit(0);
+  });
+
+process.on("SIGINT", () => {
+  mongoose.connection.close().finally(() => {
+    console.log(`Database connection closed`);
+    process.exit(0);
+  });
+});
+```
+
+### `routes/sessions.routes.js`
+Define las rutas para manejar las sesiones de usuario.
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const sessionsController = require('../controllers/sessions.controller');
+
+router.post('/', sessionsController.create);
+router.delete('/', sessionsController.destroy);
+
+module.exports = router;
+```
+
+### `routes/users.routes.js`
+Define las rutas para la gestión de usuarios.
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const usersController = require('../controllers/users.controller');
+const sessionMiddleware = require('../middlewares/session.middleware');
+
+// Ruta para obtener el perfil del usuario
+router.post('/', usersController.create);
+router.get('/me', sessionMiddleware, usersController.profile);
+
+module.exports = router;
+```
+
 ### `controllers/incidents.controller.js`
 Contiene la lógica de negocio para manejar las incidencias, incluyendo las funciones para crear, obtener, actualizar y eliminar incidencias.
 
