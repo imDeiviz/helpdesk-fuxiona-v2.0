@@ -2,7 +2,17 @@ const createError = require("http-errors");
 const Incident = require("../models/incident.model");
 
 
+module.exports.getAll = async (req, res, next) => {
+  try {
+    const incidents = await Incident.find();
+    res.status(200).json(incidents);
+  } catch (error) {
+    next(createError(500, "Error retrieving incidents"));
+  }
+};
+
 module.exports.create = async (req, res, next) => {
+
   try {
     const { title, description } = req.body;
 

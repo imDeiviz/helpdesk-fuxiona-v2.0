@@ -5,7 +5,9 @@ const incidentsController = require('../controllers/incidents.controller');
 const sessionMiddleware = require('../middlewares/session.middleware');
 
 // Routes for incident management
+router.get('/', sessionMiddleware, incidentsController.getAll);
 router.post('/', sessionMiddleware, incidentsController.create);
+
 router.get('/:id', sessionMiddleware, incidentsController.getDetail);
 router.patch('/:id', sessionMiddleware, incidentsController.update);
 

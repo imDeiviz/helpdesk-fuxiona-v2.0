@@ -130,7 +130,18 @@ Contiene la lógica de negocio para manejar las incidencias, incluyendo las func
 const createError = require("http-errors");
 const Incident = require("../models/incident.model");
 
+
+module.exports.getAll = async (req, res, next) => {
+  try {
+    const incidents = await Incident.find();
+    res.status(200).json(incidents);
+  } catch (error) {
+    next(createError(500, "Error retrieving incidents"));
+  }
+};
+
 module.exports.create = async (req, res, next) => {
+
   try {
     const { title, description } = req.body;
 
@@ -201,6 +212,7 @@ module.exports.delete = async (req, res, next) => {
     next(error);
   }
 };
+
 ```
 
 ### `models/incident.model.js`
@@ -245,11 +257,16 @@ Define las rutas para la gestión de incidencias, incluyendo los métodos HTTP y
 const express = require('express');
 const router = express.Router();
 const incidentsController = require('../controllers/incidents.controller');
+
 const sessionMiddleware = require('../middlewares/session.middleware');
 
+// Routes for incident management
+router.get('/', sessionMiddleware, incidentsController.getAll);
 router.post('/', sessionMiddleware, incidentsController.create);
+
 router.get('/:id', sessionMiddleware, incidentsController.getDetail);
 router.patch('/:id', sessionMiddleware, incidentsController.update);
+
 router.delete('/:id', sessionMiddleware, incidentsController.delete);
 
 module.exports = router;
@@ -547,10 +564,17 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
    - Si tienes una colección de Postman, puedes importarla haciendo clic en "Importar" en la esquina superior izquierda de la aplicación Postman y seleccionando el archivo de colección.
 
 2. **Ejemplos de Solicitudes**:
-   - **Crear una Incidencia**:
-     - Método: `POST`
-     - URL: `http://localhost:3000/api/v1/incidents`
-     - Cuerpo (JSON):
+
+### Obtener todas las incidencias:
+- **Método:** GET
+- **URL:** `/api/v1/incidents`
+- **Headers:**
+  - `Authorization: Bearer {token}` (opcional, si se requiere autenticación)
+
+### Crear una Incidencia:
+- **Método:** POST
+- **URL:** `http://localhost:3000/api/v1/incidents`
+- **Cuerpo** (JSON):
        ```json
        {
          "title": "Título de la incidencia",
@@ -558,14 +582,14 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
        }
        ```
 
-   - **Obtener Detalle de una Incidencia**:
-     - Método: `GET`
-     - URL: `http://localhost:3000/api/v1/incidents/{id}`
+### Obtener Detalle de una Incidencia:
+- **Método:** GET
+- **URL:** `http://localhost:3000/api/v1/incidents/{id}`
 
-   - **Actualizar una Incidencia**:
-     - Método: `PATCH`
-     - URL: `http://localhost:3000/api/v1/incidents/{id}`
-     - Cuerpo (JSON):
+### Actualizar una Incidencia**:
+- **Método:** PATCH
+- **URL:** `http://localhost:3000/api/v1/incidents/{id}`
+- **Cuerpo** (JSON):
        ```json
        {
          "title": "Título actualizado",
@@ -573,14 +597,14 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
        }
        ```
 
-   - **Eliminar una Incidencia**:
-     - Método: `DELETE`
-     - URL: `http://localhost:3000/api/v1/incidents/{id}`
+### Eliminar una Incidencia:
+- **Método:** DELETE
+- **URL:** `http://localhost:3000/api/v1/incidents/{id}`
 
-   - **Crear un Usuario**:
-     - Método: `POST`
-     - URL: `http://localhost:3000/api/v1/users`
-     - Cuerpo (JSON):
+### Crear un Usuario:
+- **Método:** POST
+- **URL:** `http://localhost:3000/api/v1/users`
+- **Cuerpo** (JSON):
        ```json
        {
          "name": "Nombre del usuario",
@@ -590,13 +614,13 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
        }
        ```
 
-   - **Obtener Perfil del Usuario**:
-     - Método: `GET`
-     - URL: `http://localhost:3000/api/v1/users/me`
+### Obtener Perfil del Usuario:
+- **Método:** GET
+- **URL:** `http://localhost:3000/api/v1/users/me`
 
-   - **Iniciar Sesión**:
-     - Método: `POST`
-     - URL: `http://localhost:3000/api/v1/sessions`
+### Iniciar Sesión:
+- **Método:** POST
+- **URL:** `http://localhost:3000/api/v1/sessions`
      - Cuerpo (JSON):
        ```json
        {
@@ -605,9 +629,9 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
        }
        ```
 
-   - **Cerrar Sesión**:
-     - Método: `DELETE`
-     - URL: `http://localhost:3000/api/v1/sessions`
+### Cerrar Sesión:
+- **Método:** DELETE
+- **URL:** `http://localhost:3000/api/v1/sessions`
 
 3. **Respuestas Esperadas**:
    - Para cada solicitud, asegúrate de verificar las respuestas esperadas en Postman para confirmar que la API está funcionando correctamente.
