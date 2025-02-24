@@ -478,3 +478,76 @@ api/
 ├── node_modules/
 ├── package-lock.json
 └── package.json
+
+## Pruebas con Postman
+
+Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
+
+1. **Importar la colección de Postman**:
+   - Si tienes una colección de Postman, puedes importarla haciendo clic en "Importar" en la esquina superior izquierda de la aplicación Postman y seleccionando el archivo de colección.
+
+2. **Ejemplos de Solicitudes**:
+   - **Crear una Incidencia**:
+     - Método: `POST`
+     - URL: `http://localhost:3000/api/v1/incidents`
+     - Cuerpo (JSON):
+       ```json
+       {
+         "title": "Título de la incidencia",
+         "description": "Descripción de la incidencia"
+       }
+       ```
+
+   - **Obtener Detalle de una Incidencia**:
+     - Método: `GET`
+     - URL: `http://localhost:3000/api/v1/incidents/{id}`
+
+   - **Actualizar una Incidencia**:
+     - Método: `PATCH`
+     - URL: `http://localhost:3000/api/v1/incidents/{id}`
+     - Cuerpo (JSON):
+       ```json
+       {
+         "title": "Título actualizado",
+         "description": "Descripción actualizada"
+       }
+       ```
+
+   - **Eliminar una Incidencia**:
+     - Método: `DELETE`
+     - URL: `http://localhost:3000/api/v1/incidents/{id}`
+
+   - **Crear un Usuario**:
+     - Método: `POST`
+     - URL: `http://localhost:3000/api/v1/users`
+     - Cuerpo (JSON):
+       ```json
+       {
+         "name": "Nombre del usuario",
+         "email": "usuario@example.com",
+         "password": "contraseñaSegura",
+         "office": "Oficina"
+       }
+       ```
+
+   - **Obtener Perfil del Usuario**:
+     - Método: `GET`
+     - URL: `http://localhost:3000/api/v1/users/me`
+
+   - **Iniciar Sesión**:
+     - Método: `POST`
+     - URL: `http://localhost:3000/api/v1/sessions`
+     - Cuerpo (JSON):
+       ```json
+       {
+         "email": "usuario@example.com",
+         "password": "contraseñaSegura"
+       }
+       ```
+
+   - **Cerrar Sesión**:
+     - Método: `DELETE`
+     - URL: `http://localhost:3000/api/v1/sessions`
+
+3. **Respuestas Esperadas**:
+   - Para cada solicitud, asegúrate de verificar las respuestas esperadas en Postman para confirmar que la API está funcionando correctamente.
