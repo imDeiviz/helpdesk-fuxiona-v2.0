@@ -1,7 +1,6 @@
 const createError = require("http-errors");
 const Incident = require("../models/incident.model");
 
-
 module.exports.getAll = async (req, res, next) => {
   try {
     const incidents = await Incident.find();
@@ -12,21 +11,28 @@ module.exports.getAll = async (req, res, next) => {
 };
 
 module.exports.create = async (req, res, next) => {
-
   try {
     const { title, description } = req.body;
+    const { office, name, email } = req.user; // Extraer datos del usuario autenticado
 
-    // Validate that title and description are provided
+    // Validar que se proporcionen título y descripción
     if (!title || !description) {
       throw createError(400, "Title and description are required");
     }
 
-    // Create a new incident
-    const newIncident = new Incident({ title, description });
+    // Crear una nueva incidencia
+    const newIncidentData = {
+      title,
+      description,
+      office,
+      name,
+      email,
+    };
+
+    const newIncident = new Incident(newIncidentData);
     await newIncident.save();
 
     res.status(201).json({ message: "Incident created successfully", incident: newIncident, id: newIncident._id });
-
   } catch (error) {
     next(error);
   }
@@ -52,7 +58,7 @@ module.exports.update = async (req, res, next) => {
     const { id } = req.params;
     const { title, description, status } = req.body;
 
-    // Update only the fields that are provided
+    // Actualizar solo los campos que se proporcionan
     const updatedIncident = await Incident.findByIdAndUpdate(id, { 
       ...(title && { title }), 
       ...(description && { description }), 

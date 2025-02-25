@@ -11,14 +11,13 @@ const incidentSchema = new mongoose.Schema(
       required: [true, "The description is required"],
     },
     status: { 
-    creationDate: {
-        type: Date,
-        default: Date.now,
-    },
-
       type: String,
       enum: ["Pending", "Resolved"],
       default: "Pending",
+    },
+    creationDate: {
+      type: Date,
+      default: Date.now,
     },
   },
   {

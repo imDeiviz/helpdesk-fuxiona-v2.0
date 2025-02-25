@@ -581,6 +581,8 @@ Para realizar pruebas de la API utilizando Postman, sigue estos pasos:
          "description": "Descripción de la incidencia"
        }
        ```
+- **Nota:** Los campos `office`, `name`, y `email` se completan automáticamente a partir del perfil del usuario autenticado.
+
 
 ### Obtener Detalle de una Incidencia:
 - **Método:** GET
