@@ -10,11 +10,15 @@ const incidentSchema = new mongoose.Schema(
       type: String,
       required: [true, "The description is required"],
     },
-    status: { 
+    status: {
       type: String,
       enum: ["Pending", "Resolved"],
       default: "Pending",
     },
+    office: { type: String, required: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    files: [{ type: String }], 
     creationDate: {
       type: Date,
       default: Date.now,

@@ -17,8 +17,15 @@ module.exports.create = async (req, res, next) => {
 
     // Validar que se proporcionen título y descripción
     if (!title || !description) {
-      throw createError(400, "Title and description are required");
+      throw createError(400, "El título y la descripción son obligatorios");
     }
+
+    // Procesar archivos subidos (si existen)
+    let files = [];
+    if (req.files && req.files.length) {
+      files = req.files.map(file => file.path); 
+    }
+    console.log(files);
 
     // Crear una nueva incidencia
     const newIncidentData = {
@@ -27,7 +34,9 @@ module.exports.create = async (req, res, next) => {
       office,
       name,
       email,
+      files,
     };
+    console.log(newIncidentData);
 
     const newIncident = new Incident(newIncidentData);
     await newIncident.save();
