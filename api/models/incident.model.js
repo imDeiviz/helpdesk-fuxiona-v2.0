@@ -19,6 +19,11 @@ const incidentSchema = new mongoose.Schema(
       type: String, 
       required: true 
     },
+    priority: { 
+      type: String, 
+      enum: ["Alta", "Media", "Baja"], 
+      default: "Media" 
+    },
     name: { 
       type: String, 
       required: true 
@@ -27,13 +32,12 @@ const incidentSchema = new mongoose.Schema(
       type: String, 
       required: true 
     },
-    files: [{ type: String }], 
+    files: [{ type: String, 
+      default: [] }], 
     creationDate: {
       type: Date,
       default: Date.now,
-    },
-    priority: { type: String, enum: ["Alta", "Media", "Baja"], default: "Media" } // ✅ Nuevo campo agregado
-
+    }
   },
   {
     timestamps: true,
