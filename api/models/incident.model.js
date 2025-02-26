@@ -15,9 +15,18 @@ const incidentSchema = new mongoose.Schema(
       enum: ["Pending", "Resolved"],
       default: "Pending",
     },
-    office: { type: String, required: true },
-    name: { type: String, required: true },
-    email: { type: String, required: true },
+    office: { 
+      type: String, 
+      required: true 
+    },
+    name: { 
+      type: String, 
+      required: true 
+    },
+    email: { 
+      type: String, 
+      required: true 
+    },
     files: [{ type: String }], 
     creationDate: {
       type: Date,
