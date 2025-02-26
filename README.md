@@ -1,5 +1,17 @@
 # Estructura del Proyecto
 
+## Resumen de Archivos
+
+- **api/**: Contiene toda la lógica del backend de la aplicación.
+- **config/**: Archivos de configuración para la base de datos y las rutas.
+- **controllers/**: Controladores que manejan la lógica de negocio y las respuestas a las solicitudes.
+- **middlewares/**: Middleware que se utiliza para manejar solicitudes y respuestas, como la autenticación y la carga de archivos.
+- **models/**: Modelos de datos que definen la estructura de los documentos en la base de datos.
+- **routes/**: Definiciones de rutas para la API.
+- **uploads/**: Carpeta para almacenar archivos subidos.
+- **app.js**: Archivo principal que inicializa la aplicación y configura middlewares y rutas.
+- **package.json**: Archivo de configuración del proyecto que incluye dependencias y scripts.
+
 ```
 api/
 ├── config/
@@ -19,7 +31,9 @@ api/
 │   └── users.routes.js
 ├── routes/
 │   ├── incidents.routes.js
-│   ├── users.routes.js
+│   ├── sessions.routes.js
+│   └── users.routes.js
+├── uploads/
 ├── app.js
 └── package.json
 ```
