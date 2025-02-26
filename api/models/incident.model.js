@@ -32,6 +32,8 @@ const incidentSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    priority: { type: String, enum: ["Alta", "Media", "Baja"], default: "Media" } // ✅ Nuevo campo agregado
+
   },
   {
     timestamps: true,

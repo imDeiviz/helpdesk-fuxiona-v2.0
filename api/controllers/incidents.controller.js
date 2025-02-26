@@ -12,7 +12,8 @@ module.exports.getAll = async (req, res, next) => {
 
 module.exports.create = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+const { title, description, priority } = req.body;
+
     const { office, name, email } = req.user; // Extraer datos del usuario autenticado
 
     // Validar que se proporcionen título y descripción
@@ -35,6 +36,8 @@ module.exports.create = async (req, res, next) => {
       name,
       email,
       files,
+      priority: priority || "Baja", // Se asigna prioridad por defecto si no se envía
+
     };
     console.log(newIncidentData);
 
@@ -65,13 +68,16 @@ module.exports.getDetail = async (req, res, next) => {
 module.exports.update = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+const { title, description, status, priority } = req.body;
+
 
     // Actualizar solo los campos que se proporcionan
     const updatedIncident = await Incident.findByIdAndUpdate(id, { 
       ...(title && { title }), 
       ...(description && { description }), 
-      ...(status && { status }) 
+      ...(status && { status }),
+      ...(priority && { priority }) 
+
     }, { new: true });
 
     if (!updatedIncident) {
