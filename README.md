@@ -726,84 +726,262 @@ module.exports = router;
 
 # Pruebas con Postman
 
-## 1. Crear Usuario
-- **Método**: POST
-- **URL**: `http://localhost:3000/api/v1/users`
-- **Header (opcional)**: `Content-Type: application/json`
-- **Cuerpo** (JSON):
-```json
+1. Crear Usuario
+Método: POST
+URL: http://localhost:3000/api/v1/users
+Headers (opcional):
+Content-Type: application/json
+Body (raw, JSON):
+json
+Copiar
+Editar
 {
-  {
   "name": "Nombre del usuario",
   "email": "usuario@example.com",
   "password": "contraseñaSegura",
   "office": "Oficina X"
 }
-}
-```
 
+Descripción:
+Este endpoint crea un nuevo usuario en la base de datos.
+Respuesta Exitosa (201 Created):
+json
 
-TODO (el resto de pruebas)
-
-
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
-
-## 2. Obtener todas las incidencias
-- **Método**: GET
-- **URL**: `http://localhost:3000/api/v1/incidents`
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
-
-## 3. Obtener detalles de una incidencia
-- **Método**: GET
-- **URL**: `http://localhost:3000/api/v1/incidents/:id`
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
-
-## 4. Actualizar una incidencia
-- **Método**: PATCH
-- **URL**: `http://localhost:3000/api/v1/incidents/:id`
-- **Cuerpo** (JSON):
-```json
 {
-  "title": "Título actualizado",
-  "description": "Descripción actualizada"
+  "message": "Usuario creado exitosamente"
 }
-```
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
 
-## 5. Eliminar una incidencia
-- **Método**: DELETE
-- **URL**: `http://localhost:3000/api/v1/incidents/:id`
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
+2. Inicio de Sesión
+Método: POST
+URL: http://localhost:3000/api/v1/sessions
+Headers (opcional):
+Content-Type: application/json
+Body (raw, JSON):
+json
+Copiar
+Editar
+{
+  "email": "usuario@example.com",
+  "password": "contraseñaSegura"
+}
+Descripción:
+Inicia sesión con las credenciales del usuario, estableciendo la sesión en el servidor.
+Respuesta Exitosa (200 OK):
+json
 
-## 6. Crear un nuevo usuario
-- **Método**: POST
-- **URL**: `http://localhost:3000/api/v1/users`
-- **Cuerpo** (JSON):
-```json
+{
+  "message": "Inicio de sesión exitoso"
+}
+
+A partir de este momento, el servidor creará una sesión (guardando req.session.userId).
+Nota:
+En Postman, guarda la cookie de sesión que se recibe (si la respuesta la incluye) para las siguientes solicitudes. También puedes usar la sección Cookies de Postman para ver y gestionar la cookie de sesión.
+
+3. Obtener Perfil
+Método: GET
+URL: http://localhost:3000/api/v1/users/me
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Descripción:
+Devuelve la información del usuario autenticado en la sesión actual.
+Respuesta Exitosa (200 OK):
+json
+
 {
   "name": "Nombre del usuario",
-  "email": "correo@ejemplo.com",
-  "password": "contraseña"
+  "email": "usuario@example.com",
+  "office": "Oficina X"
 }
-```
+Nota:
+Asegúrate de incluir la cookie de sesión que se estableció durante el login. De lo contrario, recibirás un error 401.
 
-## 7. Obtener perfil del usuario
-- **Método**: GET
-- **URL**: `http://localhost:3000/api/v1/users/me`
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
+4. Crear Incidencia (con archivo)
+Método: POST
+URL: http://localhost:3000/api/v1/incidents
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Body (form-data):
+Campos de texto:
+title: Título de la incidencia
+description: Descripción de la incidencia
+Archivos:
+Key: files (selecciona File en lugar de Text)
+Adjunta uno o más archivos
+Descripción:
+Crea una nueva incidencia y permite adjuntar archivos usando multer.
+Respuesta Exitosa (201 Created):
+json
 
-## 8. Actualizar perfil del usuario
-- **Método**: PATCH
-- **URL**: `http://localhost:3000/api/v1/users/me`
-- **Cuerpo** (JSON):
-```json
 {
-  "name": "Nuevo nombre"
+  "message": "Incident created successfully",
+  "incident": {
+    "title": "Título de la incidencia",
+    "description": "Descripción de la incidencia",
+    "files": ["uploads/ejemplo.txt", ...],
+    ...
+  },
+  "id": "ID_de_la_incidencia"
 }
-```
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
 
-## 9. Eliminar usuario
-- **Método**: DELETE
-- **URL**: `http://localhost:3000/api/v1/users/me`
-- **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
+5. Obtener Todas las Incidencias
+Método: GET
+URL: http://localhost:3000/api/v1/incidents
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Descripción:
+Retorna un array con todas las incidencias almacenadas en la base de datos.
+Respuesta Exitosa (200 OK):
+json
+
+[
+  {
+    "title": "Título",
+    "description": "Descripción",
+    "files": [...],
+    ...
+  },
+  ...
+]
+
+6. Obtener Detalle de Incidencia
+Método: GET
+URL: http://localhost:3000/api/v1/incidents/:id
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Descripción:
+Retorna los datos detallados de la incidencia con el ID especificado.
+Respuesta Exitosa (200 OK):
+json
+
+{
+  "title": "Título",
+  "description": "Descripción",
+  "files": [...],
+  ...
+}
+
+7. Editar Incidencia
+Método: PATCH
+URL: http://localhost:3000/api/v1/incidents/:id
+Headers (opcional):
+Content-Type: application/json
+Cookie: session_id=<valor-de-la-cookie>
+Body (raw, JSON):
+json
+
+{
+  "title": "Título actualizado",
+  "description": "Descripción actualizada",
+  "status": "Resolved",
+  "priority": "Alta"
+}
+
+Descripción:
+Actualiza los campos de la incidencia. No incluye la lógica de adjuntar o eliminar archivos (ver endpoints específicos más abajo).
+Respuesta Exitosa (200 OK):
+json
+
+{
+  "message": "Incident updated successfully",
+  "incident": {
+    "title": "Título actualizado",
+    "description": "Descripción actualizada",
+    ...
+  }
+}
+
+8. Añadir Archivo a la Incidencia
+Método: PATCH
+URL: http://localhost:3000/api/v1/incidents/:id/files
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Body (form-data):
+Key: files (selecciona File), adjunta uno o varios archivos
+Descripción:
+Añade archivos a una incidencia existente sin reemplazar los ya adjuntos.
+Respuesta Exitosa (200 OK):
+json
+
+{
+  "message": "Archivos añadidos correctamente",
+  "incident": {
+    "title": "Título",
+    "description": "Descripción",
+    "files": ["uploads/archivo1.pdf", "uploads/archivo2.png", ...],
+    ...
+  }
+}
+
+9. Eliminar Archivo de la Incidencia
+Método: DELETE
+URL: http://localhost:3000/api/v1/incidents/:id/files
+Headers (opcional):
+Content-Type: application/json
+Cookie: session_id=<valor-de-la-cookie>
+Body (raw, JSON):
+json
+
+{
+  "filePath": "uploads/archivo2.png"
+}
+
+Descripción:
+Elimina un archivo específico del array files de la incidencia y, opcionalmente, lo borra físicamente del sistema.
+Respuesta Exitosa (200 OK):
+
+json
+
+{
+  "message": "File removed successfully",
+  "incident": {
+    "title": "Título",
+    "files": ["uploads/archivo1.pdf", ...],
+    ...
+  }
+}
+
+10. Descargar un Archivo Adjunto
+Método: GET
+URL: http://localhost:3000/uploads/<nombre-del-archivo>
+Descripción:
+Permite descargar un archivo adjunto desde la carpeta uploads.
+(No requiere un endpoint adicional en Express, pues ya se configura con app.use('/uploads', express.static('uploads')) en app.js.)
+
+11. Salir de Sesión
+Método: DELETE
+URL: http://localhost:3000/api/v1/sessions
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Descripción:
+Cierra la sesión del usuario en el servidor, destruyendo req.session.
+Respuesta Exitosa (204 No Content):
+(Sin contenido en el cuerpo.)
+
+12. Eliminar Incidencia
+Método: DELETE
+URL: http://localhost:3000/api/v1/incidents/:id
+Headers (opcional):
+Cookie: session_id=<valor-de-la-cookie>
+Descripción:
+Elimina la incidencia especificada por :id.
+Respuesta Exitosa (200 OK):
+json
+
+{
+  "message": "Incident deleted successfully"
+}
+
+Resumen de Pasos en Postman:
+
+Crear Usuario: (POST /api/v1/users)
+Iniciar Sesión: (POST /api/v1/sessions), guardar cookie de sesión.
+Obtener Perfil: (GET /api/v1/users/me), usando la cookie de sesión.
+Crear Incidencia (con archivo): (POST /api/v1/incidents) usando form-data con la key files.
+Obtener Todas las Incidencias: (GET /api/v1/incidents).
+Obtener Detalle de Incidencia: (GET /api/v1/incidents/:id).
+Editar Incidencia: (PATCH /api/v1/incidents/:id).
+Añadir Archivo a la Incidencia: (PATCH /api/v1/incidents/:id/files) usando form-data.
+Eliminar Archivo de la Incidencia: (DELETE /api/v1/incidents/:id/files) enviando en el body el filePath.
+Descargar un Archivo Adjunto: (GET /uploads/<nombre-archivo>).
+Salir de Sesión: (DELETE /api/v1/sessions).
+Eliminar Incidencia: (DELETE /api/v1/incidents/:id).
