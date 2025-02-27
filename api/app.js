@@ -36,6 +36,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error al conectar a MongoDB', err));
 
+/* Servir archivos estáticos */
+app.use('/uploads', express.static('uploads'));
+
 /* API Routes Configuration */
 const routesConfig = require("./config/routes.config");
 

@@ -50,7 +50,64 @@ const { title, description, priority } = req.body;
   }
 };
 
+module.exports.removeFile = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { filePath } = req.body; // Ruta del archivo a eliminar
+
+    // Actualizar la incidencia para eliminar el archivo del array files
+    const updatedIncident = await Incident.findByIdAndUpdate(
+      id,
+      { $pull: { files: filePath } },
+      { new: true }
+    );
+
+    if (!updatedIncident) {
+      throw createError(404, "Incident not found");
+    }
+
+    // Opcional: Eliminar el archivo del sistema
+    const fs = require('fs');
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error al eliminar el archivo:", err);
+      }
+    });
+
+    res.status(200).json({ message: "File removed successfully", incident: updatedIncident });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addFiles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No se ha enviado ningún archivo" });
+    }
+    
+    const newFiles = req.files.map(file => file.path);
+    
+    const updatedIncident = await Incident.findByIdAndUpdate(
+      id,
+      { $push: { files: { $each: newFiles } } },
+      { new: true }
+    );
+    
+    if (!updatedIncident) {
+      return res.status(404).json({ message: "Incidencia no encontrada" });
+    }
+    
+    res.status(200).json({ message: "Archivos añadidos correctamente", incident: updatedIncident });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.getDetail = async (req, res, next) => {
+
+
   try {
     const { id } = req.params;
     const incident = await Incident.findById(id);
@@ -65,7 +122,8 @@ module.exports.getDetail = async (req, res, next) => {
   }
 };
 
-module.exports.update = async (req, res, next) => {
+module.exports.update = async (req, res, next) => { 
+
   try {
     const { id } = req.params;
 const { title, description, status, priority } = req.body;

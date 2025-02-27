@@ -80,6 +80,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('Conectado a MongoDB'))
 .catch(err => console.error('Error al conectar a MongoDB', err));
 
+/* Servir archivos estáticos */
+app.use('/uploads', express.static('uploads'));
+
 /* API Routes Configuration */
 const routesConfig = require("./config/routes.config");
 
@@ -230,7 +233,64 @@ const { title, description, priority } = req.body;
   }
 };
 
+module.exports.removeFile = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { filePath } = req.body; // Ruta del archivo a eliminar
+
+    // Actualizar la incidencia para eliminar el archivo del array files
+    const updatedIncident = await Incident.findByIdAndUpdate(
+      id,
+      { $pull: { files: filePath } },
+      { new: true }
+    );
+
+    if (!updatedIncident) {
+      throw createError(404, "Incident not found");
+    }
+
+    // Opcional: Eliminar el archivo del sistema
+    const fs = require('fs');
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error al eliminar el archivo:", err);
+      }
+    });
+
+    res.status(200).json({ message: "File removed successfully", incident: updatedIncident });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addFiles = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "No se ha enviado ningún archivo" });
+    }
+    
+    const newFiles = req.files.map(file => file.path);
+    
+    const updatedIncident = await Incident.findByIdAndUpdate(
+      id,
+      { $push: { files: { $each: newFiles } } },
+      { new: true }
+    );
+    
+    if (!updatedIncident) {
+      return res.status(404).json({ message: "Incidencia no encontrada" });
+    }
+    
+    res.status(200).json({ message: "Archivos añadidos correctamente", incident: updatedIncident });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.getDetail = async (req, res, next) => {
+
+
   try {
     const { id } = req.params;
     const incident = await Incident.findById(id);
@@ -245,7 +305,8 @@ module.exports.getDetail = async (req, res, next) => {
   }
 };
 
-module.exports.update = async (req, res, next) => {
+module.exports.update = async (req, res, next) => { 
+
   try {
     const { id } = req.params;
 const { title, description, status, priority } = req.body;
@@ -449,9 +510,9 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/'); 
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+filename: (req, file, cb) => {
+    cb(null, file.originalname); 
+
   }
 });
 
@@ -626,8 +687,12 @@ router.get('/', sessionMiddleware, incidentsController.getAll);
 router.post('/', sessionMiddleware, upload.array('files', 10), incidentsController.create);
 
 router.get('/:id', sessionMiddleware, incidentsController.getDetail);
+router.delete('/:id/files', sessionMiddleware, incidentsController.removeFile);
+router.patch('/:id/files', sessionMiddleware, upload.array('files', 10), incidentsController.addFiles);
+
 router.patch('/:id', sessionMiddleware, incidentsController.update);
 router.delete('/:id', sessionMiddleware, incidentsController.delete);
+
 
 module.exports = router;
 ```
@@ -661,16 +726,26 @@ module.exports = router;
 
 # Pruebas con Postman
 
-## 1. Crear una nueva incidencia
+## 1. Crear Usuario
 - **Método**: POST
-- **URL**: `http://localhost:3000/api/v1/incidents`
+- **URL**: `http://localhost:3000/api/v1/users`
+- **Header (opcional)**: `Content-Type: application/json`
 - **Cuerpo** (JSON):
 ```json
 {
-  "title": "Título de la incidencia",
-  "description": "Descripción de la incidencia"
+  {
+  "name": "Nombre del usuario",
+  "email": "usuario@example.com",
+  "password": "contraseñaSegura",
+  "office": "Oficina X"
+}
 }
 ```
+
+
+TODO (el resto de pruebas)
+
+
 - **Autenticación**: Asegúrate de incluir el token de sesión en los encabezados.
 
 ## 2. Obtener todas las incidencias
