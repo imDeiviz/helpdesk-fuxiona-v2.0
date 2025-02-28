@@ -12,7 +12,7 @@ module.exports.getAll = async (req, res, next) => {
 
 module.exports.create = async (req, res, next) => {
   try {
-const { title, description, priority } = req.body;
+    const { title, description, priority } = req.body;
 
     const { office, name, email } = req.user; // Extraer datos del usuario autenticado
 
@@ -22,11 +22,11 @@ const { title, description, priority } = req.body;
     }
 
     // Procesar archivos subidos (si existen)
+    console.log("Archivos subidos:", req.files); // Agregar log para verificar los archivos subidos
     let files = [];
     if (req.files && req.files.length) {
       files = req.files.map(file => file.path); 
     }
-    console.log(files);
 
     // Crear una nueva incidencia
     const newIncidentData = {
@@ -37,7 +37,6 @@ const { title, description, priority } = req.body;
       email,
       files,
       priority: priority || "Baja", // Se asigna prioridad por defecto si no se envía
-
     };
     console.log(newIncidentData);
 
@@ -86,9 +85,10 @@ module.exports.addFiles = async (req, res, next) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No se ha enviado ningún archivo" });
     }
-    
+  
+    // Almacenar las URLs de Cloudinary en lugar de las rutas locales
     const newFiles = req.files.map(file => file.path);
-    
+
     const updatedIncident = await Incident.findByIdAndUpdate(
       id,
       { $push: { files: { $each: newFiles } } },
@@ -105,29 +105,34 @@ module.exports.addFiles = async (req, res, next) => {
   }
 };
 
-module.exports.getDetail = async (req, res, next) => {
-
-
+module.exports.downloadFile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const incident = await Incident.findById(id);
+    const { filePath } = req.body; // Ruta del archivo a descargar
 
+    // Verificar que el incidente exista
+    const incident = await Incident.findById(id);
     if (!incident) {
       throw createError(404, "Incident not found");
     }
 
-    res.status(200).json(incident);
+    // Redirigir a la URL de Cloudinary para descargar el archivo
+    const fileUrl = incident.files.find(file => file === filePath);
+    if (!fileUrl) {
+      throw createError(404, "File not found in incident");
+    }
+
+    res.redirect(fileUrl); // Redirigir a la URL del archivo en Cloudinary
   } catch (error) {
     next(error);
   }
+
 };
 
-module.exports.update = async (req, res, next) => { 
-
+module.exports.getDetail = async (req, res, next) => {
   try {
     const { id } = req.params;
-const { title, description, status, priority } = req.body;
-
+    const { title, description, status, priority } = req.body;
 
     // Actualizar solo los campos que se proporcionan
     const updatedIncident = await Incident.findByIdAndUpdate(id, { 
@@ -135,8 +140,25 @@ const { title, description, status, priority } = req.body;
       ...(description && { description }), 
       ...(status && { status }),
       ...(priority && { priority }) 
-
     }, { new: true });
+
+    if (!updatedIncident) {
+      throw createError(404, "Incident not found");
+    }
+
+    res.status(200).json({ message: "Incident updated successfully", incident: updatedIncident });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Nueva función update
+module.exports.update = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedIncident = await Incident.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedIncident) {
       throw createError(404, "Incident not found");

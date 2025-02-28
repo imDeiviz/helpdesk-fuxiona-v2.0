@@ -16,5 +16,4 @@ router.patch('/:id/files', sessionMiddleware, upload.array('files', 10), inciden
 router.patch('/:id', sessionMiddleware, incidentsController.update);
 router.delete('/:id', sessionMiddleware, incidentsController.delete);
 
-
 module.exports = router;
