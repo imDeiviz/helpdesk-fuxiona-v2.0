@@ -1,6 +1,9 @@
 const createError = require("http-errors");
 const Incident = require("../models/incident.model");
+
 const cloudinary = require('cloudinary').v2;
+
+const EXTENSIONS_RAW = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'rar'];
 
 module.exports.getAll = async (req, res, next) => {
   try {
@@ -27,9 +30,9 @@ module.exports.create = async (req, res, next) => {
     if (req.files && req.files.length) {
       files = await Promise.all(req.files.map(async (file) => {
         const ext = file.originalname.split('.').pop().toLowerCase();
-        const options = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'rar'].includes(ext) ? 
+        const options = EXTENSIONS_RAW.includes(ext) ? 
           { resource_type: 'raw' } : {};
-        const public_id = `helpdesk-uploads/${file.originalname.split('.').slice(0, -1).join('.')}`;
+        const public_id = `helpdesk-uploads/${file.originalname}`;
         const uploadResult = await cloudinary.uploader.upload(file.path, { ...options, public_id });
         return { url: uploadResult.secure_url, public_id: uploadResult.public_id };
       }));
@@ -74,8 +77,6 @@ module.exports.removeFile = async (req, res, next) => {
       return res.status(404).json({ message: "Archivo no encontrado en la incidencia" });
     }
 
-    const extensionUrl = fileToDelete.url.split('.').pop().toLowerCase();
-
     updatedIncident.files = updatedIncident.files.filter(file => file.public_id !== public_id);
 
     await updatedIncident.save();
@@ -86,7 +87,9 @@ module.exports.removeFile = async (req, res, next) => {
 
     // Eliminar el archivo de Cloudinary y forzar la invalidación de la caché
 
-    const result = await cloudinary.uploader.destroy(`${public_id}.${extensionUrl}`, { invalidate: true });
+    const config = EXTENSIONS_RAW.includes(public_id.split('.').pop()) ? { resource_type: 'raw' } : {};
+
+    const result = await cloudinary.uploader.destroy(public_id, { invalidate: true, ...config });
 
     console.log("Resultado de la eliminación en Cloudinary:", result);
 
@@ -112,8 +115,8 @@ module.exports.addFiles = async (req, res, next) => {
     // Almacenar las URLs de Cloudinary en lugar de las rutas locales
     const newFiles = await Promise.all(req.files.map(async (file) => {
       const ext = file.originalname.split('.').pop().toLowerCase();
-      const options = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'rar'].includes(ext) ? 
-        { resource_type: 'raw' } : {};
+      const options = EXTENSIONS_RAW.includes(ext) ? 
+          { resource_type: 'raw' } : {};
       const public_id = `helpdesk-uploads/${file.originalname.split('.').slice(0, -1).join('.')}`;
       const uploadResult = await cloudinary.uploader.upload(file.path, { ...options, public_id });
       return { url: uploadResult.secure_url, public_id: uploadResult.public_id };
