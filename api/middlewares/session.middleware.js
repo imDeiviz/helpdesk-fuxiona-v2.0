@@ -14,6 +14,7 @@ module.exports = async (req, res, next) => {
     req.user = user; // Almacenar el usuario en la solicitud
     next();
   } catch (err) {
-    return res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+    return res.status(500).json({ error: 'Error interno del servidor' });
+
   }
 };

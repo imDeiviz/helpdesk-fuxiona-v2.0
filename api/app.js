@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 /* Configuración de la sesión */
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'PB5^H8f&v$_Nn7q~4r,Ksk',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
 
@@ -54,6 +54,6 @@ app.use((err, req, res, next) => {
 
 const port = Number(process.env.PORT || 3000);
 
-app.listen(port, () => console.info(`Application running at port ${port}`));
+app.listen(port, () => console.info(`Application running at a correct port`));
 
 module.exports = app;

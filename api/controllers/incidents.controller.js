@@ -48,7 +48,6 @@ module.exports.create = async (req, res, next) => {
       files,
       priority: priority || "Baja", // Se asigna prioridad por defecto si no se envía
     };
-    console.log(newIncidentData);
 
     const newIncident = new Incident(newIncidentData);
     await newIncident.save();
@@ -91,15 +90,11 @@ module.exports.removeFile = async (req, res, next) => {
 
     const result = await cloudinary.uploader.destroy(public_id, { invalidate: true, ...config });
 
-    console.log("Resultado de la eliminación en Cloudinary:", result);
-
     if (result.result !== "ok") {
       return res.status(500).json({ message: "No se pudo eliminar el archivo en Cloudinary", result });
     }
 
     res.status(200).json({ message: "Archivo eliminado correctamente", incident: updatedIncident });
-
-
   } catch (error) {
     next(error);
   }

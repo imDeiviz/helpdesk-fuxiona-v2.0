@@ -1,7 +1,7 @@
 module.exports = (req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
-    process.env.CORS_ORIGIN || "mongodb+srv://dmrojassantana:mcXqOnlztBPqLlp7@fuxionahelpdesk.28xum.mongodb.net/"
+    process.env.MONGODB_URI
   );
 
   res.header("Access-Control-Allow-Headers", "content-type");
