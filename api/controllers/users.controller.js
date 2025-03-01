@@ -41,17 +41,17 @@ module.exports.profile = (req, res, next) => {
   }
 
   User.findById(req.session.userId)
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
-      res.json({ 
+      res.json({
         name: user.name,
         email: user.email,
-        office: user.office // Include office in the profile response
+        office: user.office, // Include office in the profile response
       });
     })
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 module.exports.getProfile = (req, res, next) => {
@@ -60,5 +60,5 @@ module.exports.getProfile = (req, res, next) => {
 
 exports.user = (req, res) => {
   // Your logic for handling the user creation
-  res.send('User created');
+  res.send("User created");
 };
