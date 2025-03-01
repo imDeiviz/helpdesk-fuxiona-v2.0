@@ -891,170 +891,155 @@ module.exports = router;
 
 # Pruebas con Postman
 
-Utiliza Postman para verificar el correcto funcionamiento de la API de HelpDesk Fuxiona. Asegúrate de configurar el entorno en Postman para que la variable de entorno baseUrl esté definida como:
+Utiliza Postman para verificar el correcto funcionamiento de la API de HelpDesk Fuxiona. Asegúrate de configurar el entorno en Postman para que la variable de entorno `baseUrl` esté definida como:
 
-bash
-Copiar
-Editar
+```
 http://localhost:3000/api/v1
-1. Crear un Nuevo Usuario
-Método: POST
-URL: {{baseUrl}}/users
-Headers:
-Content-Type: application/json
-Body (raw, JSON):
-json
-Copiar
-Editar
+```
+
+## 1. Crear un Nuevo Usuario
+- **Método:** POST
+- **URL:** `{{baseUrl}}/users`
+- **Headers:**
+  - Content-Type: application/json
+- **Body (raw, JSON):**
+```json
 {
   "name": "Nombre del usuario",
   "email": "usuario@example.com",
   "password": "contraseñaSegura",
   "office": "Oficina X"
 }
-Descripción: Crea un nuevo usuario en la base de datos.
-Respuesta Esperada:
-Código 201 y un mensaje de confirmación.
-2. Inicio de Sesión
-Método: POST
-URL: {{baseUrl}}/sessions
-Headers:
-Content-Type: application/json
-Body (raw, JSON):
-json
-Copiar
-Editar
+```
+- **Descripción:** Crea un nuevo usuario en la base de datos.
+- **Respuesta Esperada:** Código 201 y un mensaje de confirmación.
+
+## 2. Inicio de Sesión
+- **Método:** POST
+- **URL:** `{{baseUrl}}/sessions`
+- **Headers:**
+  - Content-Type: application/json
+- **Body (raw, JSON):**
+```json
 {
   "email": "usuario@example.com",
   "password": "contraseñaSegura"
 }
-Descripción: Inicia sesión y establece la sesión del usuario.
-Respuesta Esperada:
-Código 200 y un mensaje "Inicio de sesión exitoso".
-Nota:
-Guarda la cookie de sesión generada (usa el Cookie Manager de Postman) para autenticar las siguientes solicitudes.
-3. Obtener el Perfil del Usuario
-Método: GET
-URL: {{baseUrl}}/users/me
-Headers:
-Asegúrate de incluir la cookie de sesión.
-Descripción: Devuelve la información del usuario autenticado.
-Respuesta Esperada:
-json
-Copiar
-Editar
+```
+- **Descripción:** Inicia sesión y establece la sesión del usuario.
+- **Respuesta Esperada:** Código 200 y un mensaje "Inicio de sesión exitoso".
+- **Nota:** Guarda la cookie de sesión generada (usa el Cookie Manager de Postman) para autenticar las siguientes solicitudes.
+
+## 3. Obtener el Perfil del Usuario
+- **Método:** GET
+- **URL:** `{{baseUrl}}/users/me`
+- **Headers:** Asegúrate de incluir la cookie de sesión.
+- **Descripción:** Devuelve la información del usuario autenticado.
+- **Respuesta Esperada:**
+```json
 {
   "name": "Nombre del usuario",
   "email": "usuario@example.com",
   "office": "Oficina X"
 }
-4. Crear una Nueva Incidencia con Archivos
-Método: POST
-URL: {{baseUrl}}/incidents
-Headers:
-Asegúrate de incluir la cookie de sesión.
-Body:
-Selecciona form-data.
-Campos de texto:
-title: Ej. "Título de la incidencia"
-description: Ej. "Descripción de la incidencia"
-priority (opcional): Ej. "Alta"
-Campo de archivo:
-Key: files (tipo File) — Adjunta uno o varios archivos (png, txt, pdf, etc.).
-Descripción: Crea una incidencia y sube los archivos a Cloudinary. Las respuestas incluirán un array files con objetos que contienen url y public_id.
-Respuesta Esperada:
-Código 201 y un objeto JSON con la incidencia creada.
-5. Obtener Todas las Incidencias
-Método: GET
-URL: {{baseUrl}}/incidents
-Headers:
-Incluye la cookie de sesión.
-Descripción: Devuelve un array con todas las incidencias.
-Respuesta Esperada:
-Código 200 y un array de incidencias.
-6. Obtener Detalles de una Incidencia
-Método: GET
-URL: {{baseUrl}}/incidents/:id
-Headers:
-Incluye la cookie de sesión.
-Descripción: Devuelve los detalles de la incidencia especificada.
-Respuesta Esperada:
-Código 200 y un objeto JSON con la información de la incidencia.
-7. Editar una Incidencia (sin Archivos)
-Método: PATCH
-URL: {{baseUrl}}/incidents/:id
-Headers:
-Content-Type: application/json
-Incluye la cookie de sesión.
-Body (raw, JSON):
-json
-Copiar
-Editar
+```
+
+## 4. Crear una Nueva Incidencia con Archivos
+- **Método:** POST
+- **URL:** `{{baseUrl}}/incidents`
+- **Headers:** Asegúrate de incluir la cookie de sesión.
+- **Body:** Selecciona form-data.
+  - **Campos de texto:**
+    - title: Ej. "Título de la incidencia"
+    - description: Ej. "Descripción de la incidencia"
+    - priority (opcional): Ej. "Alta"
+  - **Campo de archivo:**
+    - Key: files (tipo File) — Adjunta uno o varios archivos (png, txt, pdf, etc.).
+- **Descripción:** Crea una incidencia y sube los archivos a Cloudinary. Las respuestas incluirán un array files con objetos que contienen url y public_id.
+- **Respuesta Esperada:** Código 201 y un objeto JSON con la incidencia creada.
+
+## 5. Obtener Todas las Incidencias
+- **Método:** GET
+- **URL:** `{{baseUrl}}/incidents`
+- **Headers:** Incluye la cookie de sesión.
+- **Descripción:** Devuelve un array con todas las incidencias.
+- **Respuesta Esperada:** Código 200 y un array de incidencias.
+
+## 6. Obtener Detalles de una Incidencia
+- **Método:** GET
+- **URL:** `{{baseUrl}}/incidents/:id`
+- **Headers:** Incluye la cookie de sesión.
+- **Descripción:** Devuelve los detalles de la incidencia especificada.
+- **Respuesta Esperada:** Código 200 y un objeto JSON con la información de la incidencia.
+
+## 7. Editar una Incidencia (sin Archivos)
+- **Método:** PATCH
+- **URL:** `{{baseUrl}}/incidents/:id`
+- **Headers:**
+  - Content-Type: application/json
+  - Incluye la cookie de sesión.
+- **Body (raw, JSON):**
+```json
 {
   "title": "Título actualizado",
   "description": "Descripción actualizada",
   "status": "Resolved",
   "priority": "Alta"
 }
-Descripción: Actualiza la información de la incidencia.
-Respuesta Esperada:
-Código 200 y la incidencia actualizada.
-8. Añadir Archivo a una Incidencia Existente
-Método: PATCH
-URL: {{baseUrl}}/incidents/:id/files
-Headers:
-Incluye la cookie de sesión.
-Body:
-Selecciona form-data.
-Campo de archivo:
-Key: files (tipo File) — Adjunta uno o varios archivos.
-Descripción: Añade nuevos archivos a la incidencia, subiéndolos a Cloudinary y almacenando sus URLs y public_id en el campo files.
-Respuesta Esperada:
-Código 200 y la incidencia actualizada.
-9. Eliminar Archivo de una Incidencia y de Cloudinary
-Método: DELETE
-URL: {{baseUrl}}/incidents/:id/files
-Headers:
-Content-Type: application/json
-Incluye la cookie de sesión.
-Body (raw, JSON):
-json
-Copiar
-Editar
+```
+- **Descripción:** Actualiza la información de la incidencia.
+- **Respuesta Esperada:** Código 200 y la incidencia actualizada.
+
+## 8. Añadir Archivo a una Incidencia Existente
+- **Método:** PATCH
+- **URL:** `{{baseUrl}}/incidents/:id/files`
+- **Headers:** Incluye la cookie de sesión.
+- **Body:** Selecciona form-data.
+  - **Campo de archivo:**
+    - Key: files (tipo File) — Adjunta uno o varios archivos.
+- **Descripción:** Añade nuevos archivos a la incidencia, subiéndolos a Cloudinary y almacenando sus URLs y public_id en el campo files.
+- **Respuesta Esperada:** Código 200 y la incidencia actualizada.
+
+## 9. Eliminar Archivo de una Incidencia y de Cloudinary
+- **Método:** DELETE
+- **URL:** `{{baseUrl}}/incidents/:id/files`
+- **Headers:**
+  - Content-Type: application/json
+  - Incluye la cookie de sesión.
+- **Body (raw, JSON):**
+```json
 {
   "public_id": "public_id_del_archivo_a_eliminar"
 }
-Descripción: Elimina la referencia del archivo del array files de la incidencia y elimina el archivo de Cloudinary usando su public_id.
-Respuesta Esperada:
-Código 200 con un mensaje confirmando la eliminación y la incidencia actualizada.
-10. Descargar un Archivo Adjunto
-Método: GET
-URL: http://localhost:3000/uploads/{nombre_del_archivo}
-Descripción: Permite descargar un archivo adjunto directamente desde Cloudinary.
-Respuesta Esperada:
-El navegador iniciará la descarga del archivo.
-11. Cerrar Sesión
-Método: DELETE
-URL: {{baseUrl}}/sessions
-Headers:
-Incluye la cookie de sesión.
-Descripción: Cierra la sesión del usuario y elimina la cookie de sesión.
-Respuesta Esperada:
-Código 204 (sin contenido).
-12. Eliminar una Incidencia
-Método: DELETE
-URL: {{baseUrl}}/incidents/:id
-Headers:
-Incluye la cookie de sesión.
-Descripción: Elimina la incidencia especificada.
-Respuesta Esperada:
-Código 200 y un mensaje confirmando la eliminación.
-Pasos Generales:
+```
+- **Descripción:** Elimina la referencia del archivo del array files de la incidencia y elimina el archivo de Cloudinary usando su public_id.
+- **Respuesta Esperada:** Código 200 con un mensaje confirmando la eliminación y la incidencia actualizada.
 
-Configura el entorno en Postman con la variable baseUrl y asegúrate de capturar y enviar la cookie de sesión en cada solicitud protegida.
-Realiza las solicitudes en el orden indicado:
-Crear usuario → Iniciar sesión → Obtener perfil.
-Crear incidencia con archivos → Verificar incidencias.
-Editar incidencia → Añadir y eliminar archivos.
-Descargar archivo → Cerrar sesión.
-Verifica las respuestas y confirma que los archivos se suben a Cloudinary, que las incidencias se actualizan correctamente y que, al eliminar un archivo, éste se borra de Cloudinary.
+## 10. Descargar un Archivo Adjunto
+- **Método:** GET
+- **URL:** `http://localhost:3000/uploads/{nombre_del_archivo}`
+- **Descripción:** Permite descargar un archivo adjunto directamente desde Cloudinary.
+- **Respuesta Esperada:** El navegador iniciará la descarga del archivo.
+
+## 11. Cerrar Sesión
+- **Método:** DELETE
+- **URL:** `{{baseUrl}}/sessions`
+- **Headers:** Incluye la cookie de sesión.
+- **Descripción:** Cierra la sesión del usuario y elimina la cookie de sesión.
+- **Respuesta Esperada:** Código 204 (sin contenido).
+
+## 12. Eliminar una Incidencia
+- **Método:** DELETE
+- **URL:** `{{baseUrl}}/incidents/:id`
+- **Headers:** Incluye la cookie de sesión.
+- **Descripción:** Elimina la incidencia especificada.
+- **Respuesta Esperada:** Código 200 y un mensaje confirmando la eliminación.
+
+## Pasos Generales:
+- Configura el entorno en Postman con la variable `baseUrl` y asegúrate de capturar y enviar la cookie de sesión en cada solicitud protegida.
+- Realiza las solicitudes en el orden indicado:
+  - Crear usuario → Iniciar sesión → Obtener perfil.
+  - Crear incidencia con archivos → Verificar incidencias.
+  - Editar incidencia → Añadir y eliminar archivos.
+  - Descargar archivo → Cerrar sesión.
+- Verifica las respuestas y confirma que los archivos se suben a Cloudinary, que las incidencias se actualizan correctamente y que, al eliminar un archivo, éste se borra de Cloudinary.
