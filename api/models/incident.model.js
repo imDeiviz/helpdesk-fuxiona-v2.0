@@ -1,48 +1,19 @@
 const mongoose = require("mongoose");
 
-const incidentSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: [true, "The title is required"],
+const incidentSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  office: { type: String, required: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  files: [
+    {
+      url: { type: String },
+      public_id: { type: String },
     },
-    description: {
-      type: String,
-      required: [true, "The description is required"],
-    },
-    status: {
-      type: String,
-      enum: ["Pending", "Resolved"],
-      default: "Pending",
-    },
-    office: { 
-      type: String, 
-      required: true 
-    },
-    priority: { 
-      type: String, 
-      enum: ["Alta", "Media", "Baja"], 
-      default: "Media" 
-    },
-    name: { 
-      type: String, 
-      required: true 
-    },
-    email: { 
-      type: String, 
-      required: true 
-    },
-    files: [{ type: String, 
-      default: [] }], 
-    creationDate: {
-      type: Date,
-      default: Date.now,
-    }
-  },
-  {
-    timestamps: true,
-  }
-);
+  ],
+  priority: { type: String, default: "Baja" },
+  createdAt: { type: Date, default: Date.now },
+});
 
-const Incident = mongoose.model("Incident", incidentSchema);
-module.exports = Incident;
+module.exports = mongoose.model("Incident", incidentSchema);
