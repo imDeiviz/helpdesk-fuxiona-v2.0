@@ -891,10 +891,16 @@ module.exports = router;
 
 # Pruebas con Postman
 
-1. Crear Usuario
+Utiliza Postman para verificar el correcto funcionamiento de la API de HelpDesk Fuxiona. Asegúrate de configurar el entorno en Postman para que la variable de entorno baseUrl esté definida como:
+
+bash
+Copiar
+Editar
+http://localhost:3000/api/v1
+1. Crear un Nuevo Usuario
 Método: POST
-URL: http://localhost:3000/api/v1/users
-Headers (opcional):
+URL: {{baseUrl}}/users
+Headers:
 Content-Type: application/json
 Body (raw, JSON):
 json
@@ -906,20 +912,13 @@ Editar
   "password": "contraseñaSegura",
   "office": "Oficina X"
 }
-
-Descripción:
-Este endpoint crea un nuevo usuario en la base de datos.
-Respuesta Exitosa (201 Created):
-json
-
-{
-  "message": "Usuario creado exitosamente"
-}
-
+Descripción: Crea un nuevo usuario en la base de datos.
+Respuesta Esperada:
+Código 201 y un mensaje de confirmación.
 2. Inicio de Sesión
 Método: POST
-URL: http://localhost:3000/api/v1/sessions
-Headers (opcional):
+URL: {{baseUrl}}/sessions
+Headers:
 Content-Type: application/json
 Body (raw, JSON):
 json
@@ -929,224 +928,133 @@ Editar
   "email": "usuario@example.com",
   "password": "contraseñaSegura"
 }
-Descripción:
-Inicia sesión con las credenciales del usuario, estableciendo la sesión en el servidor.
-Respuesta Exitosa (200 OK):
-json
-
-{
-  "message": "Inicio de sesión exitoso"
-}
-
-A partir de este momento, el servidor creará una sesión (guardando req.session.userId).
+Descripción: Inicia sesión y establece la sesión del usuario.
+Respuesta Esperada:
+Código 200 y un mensaje "Inicio de sesión exitoso".
 Nota:
-En Postman, guarda la cookie de sesión que se recibe (si la respuesta la incluye) para las siguientes solicitudes. También puedes usar la sección Cookies de Postman para ver y gestionar la cookie de sesión.
-
-3. Obtener Perfil
+Guarda la cookie de sesión generada (usa el Cookie Manager de Postman) para autenticar las siguientes solicitudes.
+3. Obtener el Perfil del Usuario
 Método: GET
-URL: http://localhost:3000/api/v1/users/me
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Descripción:
-Devuelve la información del usuario autenticado en la sesión actual.
-Respuesta Exitosa (200 OK):
+URL: {{baseUrl}}/users/me
+Headers:
+Asegúrate de incluir la cookie de sesión.
+Descripción: Devuelve la información del usuario autenticado.
+Respuesta Esperada:
 json
-
+Copiar
+Editar
 {
   "name": "Nombre del usuario",
   "email": "usuario@example.com",
   "office": "Oficina X"
 }
-Nota:
-Asegúrate de incluir la cookie de sesión que se estableció durante el login. De lo contrario, recibirás un error 401.
-
-4. Crear Incidencia (con archivo)
+4. Crear una Nueva Incidencia con Archivos
 Método: POST
-URL: http://localhost:3000/api/v1/incidents
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Body (form-data):
+URL: {{baseUrl}}/incidents
+Headers:
+Asegúrate de incluir la cookie de sesión.
+Body:
+Selecciona form-data.
 Campos de texto:
-title: Título de la incidencia
-description: Descripción de la incidencia
-Archivos:
-Key: files (selecciona File en lugar de Text)
-Adjunta uno o más archivos
-Descripción:
-Crea una nueva incidencia y permite adjuntar archivos usando multer.
-Respuesta Exitosa (201 Created):
-json
-
-{
-  "message": "Incident created successfully",
-  "incident": {
-    "title": "Título de la incidencia",
-    "description": "Descripción de la incidencia",
-    "files": ["uploads/ejemplo.txt", ...],
-    ...
-  },
-  "id": "ID_de_la_incidencia"
-}
-
+title: Ej. "Título de la incidencia"
+description: Ej. "Descripción de la incidencia"
+priority (opcional): Ej. "Alta"
+Campo de archivo:
+Key: files (tipo File) — Adjunta uno o varios archivos (png, txt, pdf, etc.).
+Descripción: Crea una incidencia y sube los archivos a Cloudinary. Las respuestas incluirán un array files con objetos que contienen url y public_id.
+Respuesta Esperada:
+Código 201 y un objeto JSON con la incidencia creada.
 5. Obtener Todas las Incidencias
 Método: GET
-URL: http://localhost:3000/api/v1/incidents
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Descripción:
-Retorna un array con todas las incidencias almacenadas en la base de datos.
-Respuesta Exitosa (200 OK):
-json
-
-[
-  {
-    "title": "Título",
-    "description": "Descripción",
-    "files": [...],
-    ...
-  },
-  ...
-]
-
-6. Obtener Detalle de Incidencia
+URL: {{baseUrl}}/incidents
+Headers:
+Incluye la cookie de sesión.
+Descripción: Devuelve un array con todas las incidencias.
+Respuesta Esperada:
+Código 200 y un array de incidencias.
+6. Obtener Detalles de una Incidencia
 Método: GET
-URL: http://localhost:3000/api/v1/incidents/:id
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Descripción:
-Retorna los datos detallados de la incidencia con el ID especificado.
-Respuesta Exitosa (200 OK):
-json
-
-{
-  "title": "Título",
-  "description": "Descripción",
-  "files": [...],
-  ...
-}
-
-7. Editar Incidencia
+URL: {{baseUrl}}/incidents/:id
+Headers:
+Incluye la cookie de sesión.
+Descripción: Devuelve los detalles de la incidencia especificada.
+Respuesta Esperada:
+Código 200 y un objeto JSON con la información de la incidencia.
+7. Editar una Incidencia (sin Archivos)
 Método: PATCH
-URL: http://localhost:3000/api/v1/incidents/:id
-Headers (opcional):
+URL: {{baseUrl}}/incidents/:id
+Headers:
 Content-Type: application/json
-Cookie: session_id=<valor-de-la-cookie>
+Incluye la cookie de sesión.
 Body (raw, JSON):
 json
-
+Copiar
+Editar
 {
   "title": "Título actualizado",
   "description": "Descripción actualizada",
   "status": "Resolved",
   "priority": "Alta"
 }
-
-Descripción:
-Actualiza los campos de la incidencia. No incluye la lógica de adjuntar o eliminar archivos (ver endpoints específicos más abajo).
-Respuesta Exitosa (200 OK):
-json
-
-{
-  "message": "Incident updated successfully",
-  "incident": {
-    "title": "Título actualizado",
-    "description": "Descripción actualizada",
-    ...
-  }
-}
-
-8. Añadir Archivo a la Incidencia
+Descripción: Actualiza la información de la incidencia.
+Respuesta Esperada:
+Código 200 y la incidencia actualizada.
+8. Añadir Archivo a una Incidencia Existente
 Método: PATCH
-URL: http://localhost:3000/api/v1/incidents/:id/files
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Body (form-data):
-Key: files (selecciona File), adjunta uno o varios archivos
-Descripción:
-Añade archivos a una incidencia existente sin reemplazar los ya adjuntos.
-Respuesta Exitosa (200 OK):
-json
-
-{
-  "message": "Archivos añadidos correctamente",
-  "incident": {
-    "title": "Título",
-    "description": "Descripción",
-    "files": ["uploads/archivo1.pdf", "uploads/archivo2.png", ...],
-    ...
-  }
-}
-
-9. Eliminar Archivo de la Incidencia
+URL: {{baseUrl}}/incidents/:id/files
+Headers:
+Incluye la cookie de sesión.
+Body:
+Selecciona form-data.
+Campo de archivo:
+Key: files (tipo File) — Adjunta uno o varios archivos.
+Descripción: Añade nuevos archivos a la incidencia, subiéndolos a Cloudinary y almacenando sus URLs y public_id en el campo files.
+Respuesta Esperada:
+Código 200 y la incidencia actualizada.
+9. Eliminar Archivo de una Incidencia y de Cloudinary
 Método: DELETE
-URL: http://localhost:3000/api/v1/incidents/:id/files
-Headers (opcional):
+URL: {{baseUrl}}/incidents/:id/files
+Headers:
 Content-Type: application/json
-Cookie: session_id=<valor-de-la-cookie>
+Incluye la cookie de sesión.
 Body (raw, JSON):
 json
-
+Copiar
+Editar
 {
-  "filePath": "uploads/archivo2.png"
+  "public_id": "public_id_del_archivo_a_eliminar"
 }
-
-Descripción:
-Elimina un archivo específico del array files de la incidencia y, opcionalmente, lo borra físicamente del sistema.
-Respuesta Exitosa (200 OK):
-
-json
-
-{
-  "message": "File removed successfully",
-  "incident": {
-    "title": "Título",
-    "files": ["uploads/archivo1.pdf", ...],
-    ...
-  }
-}
-
+Descripción: Elimina la referencia del archivo del array files de la incidencia y elimina el archivo de Cloudinary usando su public_id.
+Respuesta Esperada:
+Código 200 con un mensaje confirmando la eliminación y la incidencia actualizada.
 10. Descargar un Archivo Adjunto
 Método: GET
-URL: http://localhost:3000/uploads/<nombre-del-archivo>
-Descripción:
-Permite descargar un archivo adjunto desde la carpeta uploads.
-(No requiere un endpoint adicional en Express, pues ya se configura con app.use('/uploads', express.static('uploads')) en app.js.)
-
-11. Salir de Sesión
+URL: http://localhost:3000/uploads/{nombre_del_archivo}
+Descripción: Permite descargar un archivo adjunto directamente desde Cloudinary.
+Respuesta Esperada:
+El navegador iniciará la descarga del archivo.
+11. Cerrar Sesión
 Método: DELETE
-URL: http://localhost:3000/api/v1/sessions
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Descripción:
-Cierra la sesión del usuario en el servidor, destruyendo req.session.
-Respuesta Exitosa (204 No Content):
-(Sin contenido en el cuerpo.)
-
-12. Eliminar Incidencia
+URL: {{baseUrl}}/sessions
+Headers:
+Incluye la cookie de sesión.
+Descripción: Cierra la sesión del usuario y elimina la cookie de sesión.
+Respuesta Esperada:
+Código 204 (sin contenido).
+12. Eliminar una Incidencia
 Método: DELETE
-URL: http://localhost:3000/api/v1/incidents/:id
-Headers (opcional):
-Cookie: session_id=<valor-de-la-cookie>
-Descripción:
-Elimina la incidencia especificada por :id.
-Respuesta Exitosa (200 OK):
-json
+URL: {{baseUrl}}/incidents/:id
+Headers:
+Incluye la cookie de sesión.
+Descripción: Elimina la incidencia especificada.
+Respuesta Esperada:
+Código 200 y un mensaje confirmando la eliminación.
+Pasos Generales:
 
-{
-  "message": "Incident deleted successfully"
-}
-
-Resumen de Pasos en Postman:
-
-Crear Usuario: (POST /api/v1/users)
-Iniciar Sesión: (POST /api/v1/sessions), guardar cookie de sesión.
-Obtener Perfil: (GET /api/v1/users/me), usando la cookie de sesión.
-Crear Incidencia (con archivo): (POST /api/v1/incidents) usando form-data con la key files.
-Obtener Todas las Incidencias: (GET /api/v1/incidents).
-Obtener Detalle de Incidencia: (GET /api/v1/incidents/:id).
-Editar Incidencia: (PATCH /api/v1/incidents/:id).
-Añadir Archivo a la Incidencia: (PATCH /api/v1/incidents/:id/files) usando form-data.
-Eliminar Archivo de la Incidencia: (DELETE /api/v1/incidents/:id/files) enviando en el body el filePath.
-Descargar un Archivo Adjunto: (GET /uploads/<nombre-archivo>).
-Salir de Sesión: (DELETE /api/v1/sessions).
-Eliminar Incidencia: (DELETE /api/v1/incidents/:id).
+Configura el entorno en Postman con la variable baseUrl y asegúrate de capturar y enviar la cookie de sesión en cada solicitud protegida.
+Realiza las solicitudes en el orden indicado:
+Crear usuario → Iniciar sesión → Obtener perfil.
+Crear incidencia con archivos → Verificar incidencias.
+Editar incidencia → Añadir y eliminar archivos.
+Descargar archivo → Cerrar sesión.
+Verifica las respuestas y confirma que los archivos se suben a Cloudinary, que las incidencias se actualizan correctamente y que, al eliminar un archivo, éste se borra de Cloudinary.
