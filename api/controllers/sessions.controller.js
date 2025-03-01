@@ -21,7 +21,8 @@ module.exports.create = async (req, res, next) => {
     res.status(200).json({ message: 'Inicio de sesión exitoso' });
   } catch (error) {
 
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor', details: error.message });
+
   }
 };
 

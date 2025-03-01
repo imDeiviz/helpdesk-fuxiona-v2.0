@@ -22,7 +22,8 @@ app.use(cookieParser());
 app.use(session({
   secret: process.env.SESSION_SECRET || 'PB5^H8f&v$_Nn7q~4r,Ksk',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+
   cookie: { secure: false } // Asegúrate de que 'secure' esté en 'false' si estás desarrollando en localhost sin HTTPS
 }));
 
