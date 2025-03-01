@@ -32,11 +32,14 @@ const userSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid password!`,
       },
     },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    role: { type: String, enum: ["user", "admin", "tecnico"], default: "user" },
+
     office: {
       type: String,
       required: [true, "Office is required"],
+      enum: ["Malaga", "El Palo", "Fuengirola"],
     },
+
   },
   {
     timestamps: true,

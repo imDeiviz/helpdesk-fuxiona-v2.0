@@ -1,6 +1,15 @@
 const createError = require("http-errors");
 const User = require("../models/user.model");
 
+module.exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find(); // Retrieve all users from the database
+    res.status(200).json(users); // Return the list of users
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.create = async (req, res, next) => {
   try {
     const { name, email, password, office } = req.body;
@@ -21,11 +30,23 @@ module.exports.create = async (req, res, next) => {
 };
 
 module.exports.register = async (req, res, next) => {
-  const { name, email, password, role, office } = req.body;
+    const { name, email, password, role, office } = req.body;
+
+    // Validar que el rol sea uno de los predefinidos
+    const validRoles = ["user", "admin", "tecnico"];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: "El rol no es válido" });
+    }
+
+    // Validar que la oficina sea una de las predefinidas
+    const validOffices = ["Malaga", "El Palo", "Fuengirola"];
+    if (!validOffices.includes(office)) {
+        return res.status(400).json({ message: "La oficina no es válida" });
+    }
 
   try {
     const user = await User.create({ name, email, password, role, office });
-    res.status(201).json(user);
+    res.status(201).json({ message: "Usuario registrado exitosamente", user });
   } catch (error) {
     if (error.code === 11000) {
       next(createError(400, "El email ya está registrado"));

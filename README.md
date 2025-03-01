@@ -525,6 +525,15 @@ module.exports.destroy = (req, res, next) => {
 const createError = require("http-errors");
 const User = require("../models/user.model");
 
+module.exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find(); // Retrieve all users from the database
+    res.status(200).json(users); // Return the list of users
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.create = async (req, res, next) => {
   try {
     const { name, email, password, office } = req.body;
@@ -545,11 +554,23 @@ module.exports.create = async (req, res, next) => {
 };
 
 module.exports.register = async (req, res, next) => {
-  const { name, email, password, role, office } = req.body;
+    const { name, email, password, role, office } = req.body;
+
+    // Validar que el rol sea uno de los predefinidos
+    const validRoles = ["user", "admin", "tecnico"];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: "El rol no es válido" });
+    }
+
+    // Validar que la oficina sea una de las predefinidas
+    const validOffices = ["Malaga", "El Palo", "Fuengirola"];
+    if (!validOffices.includes(office)) {
+        return res.status(400).json({ message: "La oficina no es válida" });
+    }
 
   try {
     const user = await User.create({ name, email, password, role, office });
-    res.status(201).json(user);
+    res.status(201).json({ message: "Usuario registrado exitosamente", user });
   } catch (error) {
     if (error.code === 11000) {
       next(createError(400, "El email ya está registrado"));
@@ -792,11 +813,14 @@ const userSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid password!`,
       },
     },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    role: { type: String, enum: ["user", "admin", "tecnico"], default: "user" },
+
     office: {
       type: String,
       required: [true, "Office is required"],
+      enum: ["Malaga", "El Palo", "Fuengirola"],
     },
+
   },
   {
     timestamps: true,
@@ -881,9 +905,14 @@ const router = express.Router();
 const usersController = require("../controllers/users.controller");
 const sessionMiddleware = require("../middlewares/session.middleware");
 
+// Ruta para crear un usuario
+router.post("/", usersController.register);
+
 // Ruta para obtener el perfil del usuario
-router.post("/", usersController.create);
 router.get("/me", sessionMiddleware, usersController.profile);
+
+// Ruta para obtener todos los usuarios
+router.get("/", usersController.getAllUsers);
 
 module.exports = router;
 
@@ -944,7 +973,13 @@ http://localhost:3000/api/v1
 }
 ```
 
-## 4. Crear una Nueva Incidencia con Archivos
+## 4. Obtener Todos los Usuarios
+- **Método:** GET
+- **URL:** `{{baseUrl}}/users`
+- **Descripción:** Devuelve un array con todos los usuarios.
+- **Respuesta Esperada:** Código 200 y un array de usuarios.
+
+## 5. Crear una Nueva Incidencia con Archivos
 - **Método:** POST
 - **URL:** `{{baseUrl}}/incidents`
 - **Headers:** Asegúrate de incluir la cookie de sesión.
@@ -958,21 +993,21 @@ http://localhost:3000/api/v1
 - **Descripción:** Crea una incidencia y sube los archivos a Cloudinary. Las respuestas incluirán un array files con objetos que contienen url y public_id.
 - **Respuesta Esperada:** Código 201 y un objeto JSON con la incidencia creada.
 
-## 5. Obtener Todas las Incidencias
+## 6. Obtener Todas las Incidencias
 - **Método:** GET
 - **URL:** `{{baseUrl}}/incidents`
 - **Headers:** Incluye la cookie de sesión.
 - **Descripción:** Devuelve un array con todas las incidencias.
 - **Respuesta Esperada:** Código 200 y un array de incidencias.
 
-## 6. Obtener Detalles de una Incidencia
+## 7. Obtener Detalles de una Incidencia
 - **Método:** GET
 - **URL:** `{{baseUrl}}/incidents/:id`
 - **Headers:** Incluye la cookie de sesión.
 - **Descripción:** Devuelve los detalles de la incidencia especificada.
 - **Respuesta Esperada:** Código 200 y un objeto JSON con la información de la incidencia.
 
-## 7. Editar una Incidencia (sin Archivos)
+## 8. Editar una Incidencia (sin Archivos)
 - **Método:** PATCH
 - **URL:** `{{baseUrl}}/incidents/:id`
 - **Headers:**
@@ -990,7 +1025,7 @@ http://localhost:3000/api/v1
 - **Descripción:** Actualiza la información de la incidencia.
 - **Respuesta Esperada:** Código 200 y la incidencia actualizada.
 
-## 8. Añadir Archivo a una Incidencia Existente
+## 9. Añadir Archivo a una Incidencia Existente
 - **Método:** PATCH
 - **URL:** `{{baseUrl}}/incidents/:id/files`
 - **Headers:** Incluye la cookie de sesión.
@@ -1000,7 +1035,7 @@ http://localhost:3000/api/v1
 - **Descripción:** Añade nuevos archivos a la incidencia, subiéndolos a Cloudinary y almacenando sus URLs y public_id en el campo files.
 - **Respuesta Esperada:** Código 200 y la incidencia actualizada.
 
-## 9. Eliminar Archivo de una Incidencia y de Cloudinary
+## 10. Eliminar Archivo de una Incidencia y de Cloudinary
 - **Método:** DELETE
 - **URL:** `{{baseUrl}}/incidents/:id/files`
 - **Headers:**
@@ -1015,20 +1050,20 @@ http://localhost:3000/api/v1
 - **Descripción:** Elimina la referencia del archivo del array files de la incidencia y elimina el archivo de Cloudinary usando su public_id.
 - **Respuesta Esperada:** Código 200 con un mensaje confirmando la eliminación y la incidencia actualizada.
 
-## 10. Descargar un Archivo Adjunto
+## 11. Descargar un Archivo Adjunto
 - **Método:** GET
 - **URL:** `http://localhost:3000/uploads/{nombre_del_archivo}`
 - **Descripción:** Permite descargar un archivo adjunto directamente desde Cloudinary.
 - **Respuesta Esperada:** El navegador iniciará la descarga del archivo.
 
-## 11. Cerrar Sesión
+## 12. Cerrar Sesión
 - **Método:** DELETE
 - **URL:** `{{baseUrl}}/sessions`
 - **Headers:** Incluye la cookie de sesión.
 - **Descripción:** Cierra la sesión del usuario y elimina la cookie de sesión.
 - **Respuesta Esperada:** Código 204 (sin contenido).
 
-## 12. Eliminar una Incidencia
+## 13. Eliminar una Incidencia
 - **Método:** DELETE
 - **URL:** `{{baseUrl}}/incidents/:id`
 - **Headers:** Incluye la cookie de sesión.
