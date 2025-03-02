@@ -96,6 +96,15 @@ const IncidentDetail = () => {
   const handleDeleteIncident = async () => {
     try {
       setLoading(true);
+      
+      // Verificar y eliminar archivos asociados primero
+      if (incident.files && incident.files.length > 0) {
+        for (const file of incident.files) {
+          await incidentService.removeFile(id, file.public_id);
+        }
+      }
+      
+      // Eliminar la incidencia
       await incidentService.deleteIncident(id);
       navigate('/incidents');
     } catch (err) {
