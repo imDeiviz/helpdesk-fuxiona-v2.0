@@ -9,7 +9,6 @@ const sessionSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 3600, // 1 hour
   },
   lastAccess: { type: Date, default: Date.now },
 });

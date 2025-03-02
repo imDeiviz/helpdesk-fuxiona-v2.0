@@ -24,10 +24,13 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-
-    cookie: { secure: false }, // Asegúrate de que 'secure' esté en 'false' si estás desarrollando en localhost sin HTTPS
+    cookie: { 
+      secure: false, // Asegúrate de que 'secure' esté en 'false' si estás desarrollando en localhost sin HTTPS
+      maxAge: null // La sesión no expirará hasta que se cierre el navegador
+    }
   })
 );
+
 
 /* Conectar a MongoDB */
 mongoose
