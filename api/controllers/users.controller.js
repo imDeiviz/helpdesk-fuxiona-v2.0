@@ -16,12 +16,14 @@ module.exports.create = async (req, res, next) => {
 
     // Validar que se proporcionen name, email, password y office
     if (!name || !email || !password || !office) {
-      throw createError(400, "Name, email, password y office son requeridos");
+      return next(createError(400, "Name, email, password y office son requeridos"));
     }
+
 
     // Crear un nuevo usuario
     const newUser = new User({ name, email, password, office });
-    await newUser.save();
+    await newUser.save().catch(err => next(createError(500, "Error al crear el usuario")));
+
 
     res.status(201).json({ message: "Usuario creado exitosamente" });
   } catch (error) {
@@ -35,14 +37,16 @@ module.exports.register = async (req, res, next) => {
     // Validar que el rol sea uno de los predefinidos
     const validRoles = ["user", "admin", "tecnico"];
     if (!validRoles.includes(role)) {
-        return res.status(400).json({ message: "El rol no es válido" });
+        return next(createError(400, "El rol no es válido"));
     }
+
 
     // Validar que la oficina sea una de las predefinidas
     const validOffices = ["Malaga", "El Palo", "Fuengirola"];
     if (!validOffices.includes(office)) {
-        return res.status(400).json({ message: "La oficina no es válida" });
+        return next(createError(400, "La oficina no es válida"));
     }
+
 
   try {
     const user = await User.create({ name, email, password, role, office });
@@ -70,6 +74,8 @@ module.exports.profile = (req, res, next) => {
         name: user.name,
         email: user.email,
         office: user.office, // Include office in the profile response
+        role: user.role, // Include role in the profile response
+
       });
     })
     .catch((err) => next(err));

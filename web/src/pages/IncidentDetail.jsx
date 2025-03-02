@@ -38,12 +38,12 @@ const IncidentDetail = () => {
       try {
         setLoading(true);
         const response = await incidentService.getIncidentById(id);
-        setIncident(response.data);
+        setIncident(response.data.incident);
         setEditedIncident({
-          title: response.data.title,
-          description: response.data.description,
-          priority: response.data.priority,
-          status: response.data.status || 'Pendiente'
+          title: response.data.incident.title,
+          description: response.data.incident.description,
+          priority: response.data.incident.priority,
+          status: response.data.incident.status || 'Pendiente'
         });
       } catch (err) {
         console.error('Error fetching incident:', err);
@@ -80,9 +80,9 @@ const IncidentDetail = () => {
     try {
       setLoading(true);
       const response = await incidentService.updateIncident(id, {
-  ...editedIncident,
-  files: incident.files // Ensure existing files are included
-});
+        ...editedIncident,
+        files: incident.files // Ensure existing files are included
+      });
       setIncident(response.data.incident);
       setEditing(false);
     } catch (err) {
@@ -137,10 +137,10 @@ const IncidentDetail = () => {
     try {
       setLoading(true);
       const response = await incidentService.removeFile(id, deleteFileId);
-setIncident(prev => ({
-  ...prev,
-  files: prev.files.filter(file => file.public_id !== deleteFileId) // Update the incident state to remove the deleted file
-}));
+      setIncident(prev => ({
+        ...prev,
+        files: prev.files.filter(file => file.public_id !== deleteFileId) // Update the incident state to remove the deleted file
+      }));
       setIncident(response.data.incident);
       setShowDeleteFileModal(false);
       setDeleteFileId(null);
@@ -321,7 +321,7 @@ setIncident(prev => ({
                     <div className="d-flex mb-2">
                       <Calendar size={18} className="text-muted me-2" />
                       <span className="text-muted">
-                        Creado el {new Date(incident.createdAt).toLocaleDateString()} a las {new Date(incident.createdAt).toLocaleTimeString()}
+                        Creado el {new Date(incident.createdAt).toLocaleDateString('es-ES')} a las {new Date(incident.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     
@@ -341,9 +341,9 @@ setIncident(prev => ({
                   </div>
                   
                   <h5 className="mb-3">Descripción</h5>
-                  <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>
-                    {incident.description}
-                  </p>
+                    <p className="mb-0" style={{ whiteSpace: 'pre-line' }}>
+                      {incident.description}
+                    </p>
                 </>
               )}
             </Card.Body>

@@ -6,19 +6,9 @@ const sessionMiddleware = require("../middlewares/session.middleware");
 
 // Rutas para la gestión de incidencias
 router.get("/", incidentsController.getAll);
-router.post(
-  "/",
-  sessionMiddleware,
-  upload.array("files", 10),
-  incidentsController.create
-);
+router.post("/", sessionMiddleware, upload.array("files", 10), incidentsController.create);
 
-router.patch(
-  "/:id/files",
-  sessionMiddleware,
-  upload.array("files", 10),
-  incidentsController.addFiles
-);
+router.patch("/:id/files", sessionMiddleware, upload.array("files", 10), incidentsController.addFiles);
 router.delete("/:id/files", sessionMiddleware, incidentsController.removeFile);
 
 router.get("/:id", incidentsController.getDetail);

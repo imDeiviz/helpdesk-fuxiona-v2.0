@@ -31,8 +31,9 @@ module.exports.create = async (req, res, next) => {
 
     // Validar que se proporcionen título y descripción
     if (!title || !description) {
-      throw createError(400, "El título y la descripción son obligatorios");
+      return next(createError(400, "El título y la descripción son obligatorios"));
     }
+
 
     // Procesar archivos subidos (si existen)
     let files = [];
@@ -68,7 +69,8 @@ module.exports.create = async (req, res, next) => {
     };
 
     const newIncident = new Incident(newIncidentData);
-    await newIncident.save();
+    await newIncident.save().catch(err => next(createError(500, "Error al crear la incidencia")));
+
 
     res
       .status(201)
@@ -153,10 +155,9 @@ module.exports.addFiles = async (req, res, next) => {
   try {
     const { id } = req.params;
     if (!req.files || req.files.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "No se ha enviado ningún archivo" });
+      return next(createError(400, "No se ha enviado ningún archivo"));
     }
+
 
     // Almacenar las URLs de Cloudinary en lugar de las rutas locales
     const newFiles = await Promise.all(
@@ -180,11 +181,8 @@ module.exports.addFiles = async (req, res, next) => {
       })
     );
 
-    const updatedIncident = await Incident.findByIdAndUpdate(
-      id,
-      { $push: { files: { $each: newFiles } } },
-      { new: true }
-    );
+    const updatedIncident = await Incident.findByIdAndUpdate(id, { $push: { files: { $each: newFiles } } }, { new: true }).catch(err => next(createError(500, "Error al actualizar la incidencia")));
+
 
     if (!updatedIncident) {
       return res.status(404).json({ message: "Incidencia no encontrada" });

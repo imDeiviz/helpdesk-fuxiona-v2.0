@@ -68,7 +68,7 @@ const Incidents = () => {
       result = result.filter(incident => incident.status === filters.status);
     }
     
-        setFilteredIncidents(result.data); // Ensure we set the filtered incidents from the response data
+        setFilteredIncidents(result); // Ensure we set the filtered incidents correctly
 
   }, [searchTerm, filters, incidents]);
 
