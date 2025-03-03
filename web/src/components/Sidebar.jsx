@@ -40,12 +40,6 @@ const Sidebar = ({ isOpen }) => {
       icon: <Users size={18} />,
       access: isAdmin // Solo el admin tiene acceso
     },
-    {
-      path: '/offices',
-      name: 'Oficinas',
-      icon: <Building size={18} />,
-      access: isAdmin // Acceso para admin
-    }
   ];
 
   // Función para renderizar cada elemento del menú
