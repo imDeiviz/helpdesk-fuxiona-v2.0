@@ -68,9 +68,19 @@ const Incidents = () => {
       result = result.filter(incident => incident.status === filters.status);
     }
     
-        setFilteredIncidents(result); // Ensure we set the filtered incidents correctly
+    setFilteredIncidents(result); // Ensure we set the filtered incidents correctly
 
   }, [searchTerm, filters, incidents]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await incidentService.updateIncident(id, { status: newStatus });
+      // refrescar las incidencias
+      fetchIncidents();
+    } catch (error) {
+      console.error('Error updating incident status:', error);
+    }
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -228,7 +238,7 @@ const Incidents = () => {
                           {incident.priority}
                         </Badge>
                       </td>
-                      <td>
+                      <td onClick={() => handleStatusChange(incident._id, 'En Progreso')}>
                         <Badge 
                           bg={
                             incident.status === 'Pendiente' ? 'secondary' : 

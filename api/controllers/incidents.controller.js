@@ -25,7 +25,8 @@ module.exports.getAll = async (req, res, next) => {
 
 module.exports.create = async (req, res, next) => {
   try {
-    const { title, description, priority } = req.body;
+    const { title, description, priority, status } = req.body;
+
 
     const { office, name, email } = req.user; // Extraer datos del usuario autenticado
 
@@ -66,6 +67,8 @@ module.exports.create = async (req, res, next) => {
       email,
       files,
       priority: priority || "Baja", // Se asigna prioridad por defecto si no se envía
+      status: status || "Pendiente", // Se asigna estado por defecto si no se envía
+
     };
 
     const newIncident = new Incident(newIncidentData);

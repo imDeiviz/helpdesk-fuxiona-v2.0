@@ -13,6 +13,7 @@ const incidentSchema = new mongoose.Schema({
     },
   ],
   priority: { type: String, default: "Baja" },
+  status: { type: String, default: "Pendiente", enum: ["Pendiente", "En Progreso", "Resuelto"] },
   createdAt: { type: Date, default: Date.now },
 });
 
