@@ -162,7 +162,8 @@ module.exports.addFiles = async (req, res, next) => {
         const options = EXTENSIONS_RAW.includes(ext)
           ? { resource_type: "raw" }
           : {};
-        const public_id = `helpdesk-uploads/${file.originalname.split(".").slice(0, -1).join(".")}`;
+        const public_id = `helpdesk-uploads/${file.originalname}`;
+
         const uploadResult = await cloudinary.uploader.upload(file.path, {
           ...options,
           public_id,
