@@ -16,8 +16,16 @@ const EXTENSIONS_RAW = [
 
 module.exports.getAll = async (req, res, next) => {
   try {
-    const incidents = await Incident.find();
-    res.status(200).json(incidents);
+    const { role, office } = req.user; // Extraer datos del usuario autenticado
+    let incidents;
+
+    if (role === 'admin') {
+      incidents = await Incident.find(); // Administradores ven todas las incidencias
+    } else {
+      incidents = await Incident.find({ office }); // Usuarios ven solo las incidencias de su oficina
+    }
+
+    res.status(200).json(incidents); 
   } catch (error) {
     next(createError(500, "Error retrieving incidents"));
   }
@@ -27,14 +35,12 @@ module.exports.create = async (req, res, next) => {
   try {
     const { title, description, priority, status } = req.body;
 
-
     const { office, name, email } = req.user; // Extraer datos del usuario autenticado
 
     // Validar que se proporcionen título y descripción
     if (!title || !description) {
       return next(createError(400, "El título y la descripción son obligatorios"));
     }
-
 
     // Procesar archivos subidos (si existen)
     let files = [];
@@ -68,20 +74,16 @@ module.exports.create = async (req, res, next) => {
       files,
       priority: priority || "Baja", // Se asigna prioridad por defecto si no se envía
       status: status || "Pendiente", // Se asigna estado por defecto si no se envía
-
     };
 
     const newIncident = new Incident(newIncidentData);
     await newIncident.save().catch(err => next(createError(500, "Error al crear la incidencia")));
 
-
-    res
-      .status(201)
-      .json({
-        message: "Incident created successfully",
-        incident: newIncident,
-        id: newIncident._id,
-      });
+    res.status(201).json({
+      message: "Incident created successfully",
+      incident: newIncident,
+      id: newIncident._id,
+    });
   } catch (error) {
     next(error);
   }
@@ -93,14 +95,13 @@ module.exports.removeFile = async (req, res, next) => {
     const { public_id } = req.body; // Se espera recibir el public_id del archivo
 
     if (!public_id) {
-      return res
-        .status(400)
-        .json({
-          message: "El public_id es requerido para eliminar el archivo",
-        });
+      return res.status(400).json({
+        message: "El public_id es requerido para eliminar el archivo",
+      });
     }
 
     // Eliminar la referencia del archivo del array 'files' de la incidencia
+
     const updatedIncident = await Incident.findById(id);
 
     const fileToDelete = updatedIncident.files.find(
@@ -108,9 +109,7 @@ module.exports.removeFile = async (req, res, next) => {
     );
 
     if (!fileToDelete) {
-      return res
-        .status(404)
-        .json({ message: "Archivo no encontrado en la incidencia" });
+      return res.status(404).json({ message: "Archivo no encontrado en la incidencia" });
     }
 
     updatedIncident.files = updatedIncident.files.filter(
@@ -124,7 +123,6 @@ module.exports.removeFile = async (req, res, next) => {
     }
 
     // Eliminar el archivo de Cloudinary y forzar la invalidación de la caché
-
     const config = EXTENSIONS_RAW.includes(public_id.split(".").pop())
       ? { resource_type: "raw" }
       : {};
@@ -135,20 +133,16 @@ module.exports.removeFile = async (req, res, next) => {
     });
 
     if (result.result !== "ok") {
-      return res
-        .status(500)
-        .json({
-          message: "No se pudo eliminar el archivo en Cloudinary",
-          result,
-        });
+      return res.status(500).json({
+        message: "No se pudo eliminar el archivo en Cloudinary",
+        result,
+      });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Archivo eliminado correctamente",
-        incident: updatedIncident,
-      });
+    res.status(200).json({
+      message: "Archivo eliminado correctamente",
+      incident: updatedIncident,
+    });
   } catch (error) {
     next(error);
   }
@@ -161,7 +155,6 @@ module.exports.addFiles = async (req, res, next) => {
       return next(createError(400, "No se ha enviado ningún archivo"));
     }
 
-
     // Almacenar las URLs de Cloudinary en lugar de las rutas locales
     const newFiles = await Promise.all(
       req.files.map(async (file) => {
@@ -169,10 +162,7 @@ module.exports.addFiles = async (req, res, next) => {
         const options = EXTENSIONS_RAW.includes(ext)
           ? { resource_type: "raw" }
           : {};
-        const public_id = `helpdesk-uploads/${file.originalname
-          .split(".")
-          .slice(0, -1)
-          .join(".")}`;
+        const public_id = `helpdesk-uploads/${file.originalname.split(".").slice(0, -1).join(".")}`;
         const uploadResult = await cloudinary.uploader.upload(file.path, {
           ...options,
           public_id,
@@ -186,17 +176,14 @@ module.exports.addFiles = async (req, res, next) => {
 
     const updatedIncident = await Incident.findByIdAndUpdate(id, { $push: { files: { $each: newFiles } } }, { new: true }).catch(err => next(createError(500, "Error al actualizar la incidencia")));
 
-
     if (!updatedIncident) {
       return res.status(404).json({ message: "Incidencia no encontrada" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Archivos añadidos correctamente",
-        incident: updatedIncident,
-      });
+    res.status(200).json({
+      message: "Archivos añadidos correctamente",
+      incident: updatedIncident,
+    });
   } catch (error) {
     next(error);
   }
@@ -228,6 +215,17 @@ module.exports.downloadFile = async (req, res, next) => {
 module.exports.getDetail = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { role, office } = req.user; // Extraer datos del usuario autenticado
+
+    const incident = await Incident.findById(id);
+    if (!incident) {
+      throw createError(404, "Incident not found");
+    }
+
+    if (role !== 'admin' && incident.office !== office) { 
+      return next(createError(403, "No tienes permiso para acceder a esta incidencia")); // Verificar acceso 
+    }
+
     const { title, description, status, priority } = req.body;
 
     // Actualizar solo los campos que se proporcionan
@@ -246,12 +244,10 @@ module.exports.getDetail = async (req, res, next) => {
       throw createError(404, "Incident not found");
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Incident updated successfully",
-        incident: updatedIncident,
-      });
+    res.status(200).json({
+      message: "Incident updated successfully",
+      incident: updatedIncident,
+    });
   } catch (error) {
     next(error);
   }
@@ -270,12 +266,10 @@ module.exports.update = async (req, res, next) => {
       throw createError(404, "Incident not found");
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Incident updated successfully",
-        incident: updatedIncident,
-      });
+    res.status(200).json({
+      message: "Incident updated successfully",
+      incident: updatedIncident,
+    });
   } catch (error) {
     next(error);
   }
@@ -284,7 +278,35 @@ module.exports.update = async (req, res, next) => {
 module.exports.delete = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const incidentToDelete = await Incident.findById(id);
+
+    if (!incidentToDelete) {
+      throw createError(404, "Incident not found");
+    }
+
+    // Eliminar todos los archivos adjuntos de Cloudinary, incluyendo PNG
+
+    await Promise.all(
+      incidentToDelete.files.map(async (file) => {
+        const config = EXTENSIONS_RAW.includes(file.public_id.split(".").pop())
+          ? { resource_type: "raw" }
+          : {};
+        await cloudinary.uploader.destroy(file.public_id, {
+          invalidate: true,
+          ...config,
+        });
+      })
+    );
+
+    // Ahora eliminar la incidencia
     const deletedIncident = await Incident.findByIdAndDelete(id);
+    
+    if (!deletedIncident) {
+      throw createError(404, "Incident not found");
+    }
+
+    res.status(200).json({ message: "Incident deleted successfully" });
+
 
     if (!deletedIncident) {
       throw createError(404, "Incident not found");
