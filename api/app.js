@@ -53,6 +53,7 @@ app.use("/api/v1", routesConfig);
 
 /* Manejo de errores */
 app.use((err, req, res, next) => {
+  console.error(err); // Registrar el error para facilitar la depuración
   res.status(err.status || 500).json({
     message: err.message || "Error interno del servidor",
   });
