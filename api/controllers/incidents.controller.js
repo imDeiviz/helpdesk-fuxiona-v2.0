@@ -259,7 +259,12 @@ module.exports.update = async (req, res, next) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    const updatedIncident = await Incident.findByIdAndUpdate(id, updateData, {
+    const updatedIncident = await Incident.findByIdAndUpdate(id, {
+      ...(updateData.status && req.user.role !== 'user' && { status: updateData.status }),
+      ...(updateData.title && { title: updateData.title }),
+      ...(updateData.description && { description: updateData.description }),
+      ...(updateData.priority && { priority: updateData.priority }),
+    }, {
       new: true,
     });
 
@@ -302,13 +307,6 @@ module.exports.delete = async (req, res, next) => {
     // Ahora eliminar la incidencia
     const deletedIncident = await Incident.findByIdAndDelete(id);
     
-    if (!deletedIncident) {
-      throw createError(404, "Incident not found");
-    }
-
-    res.status(200).json({ message: "Incident deleted successfully" });
-
-
     if (!deletedIncident) {
       throw createError(404, "Incident not found");
     }
