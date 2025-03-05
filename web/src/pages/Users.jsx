@@ -8,7 +8,8 @@ import {
   Search, 
   Mail, 
   Building,
-  AlertTriangle
+  AlertTriangle,
+  Trash // Importar el ícono de papelera
 } from 'lucide-react';
 import { OFFICE_OPTIONS, ROLE_OPTIONS } from '../config/constants';
 
@@ -105,6 +106,19 @@ const Users = () => {
     }
   };
 
+  const handleDeleteUser = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+      try {
+        await userService.deleteUser(id);
+        setUsers(users.filter(user => user.id !== id));
+        setFilteredUsers(filteredUsers.filter(user => user.id !== id));
+      } catch (err) {
+        console.error('Error deleting user:', err);
+        setError('Error al eliminar el usuario. Por favor, intenta de nuevo más tarde.');
+      }
+    }
+  };
+
   if (loading && users.length === 0) {
     return (
       <Container className="py-5">
@@ -165,6 +179,7 @@ const Users = () => {
                     <th>Correo Electrónico</th>
                     <th>Oficina</th>
                     <th>Rol</th>
+                    <th>Acciones</th> {/* Nueva columna para acciones */}
                   </tr>
                 </thead>
                 <tbody>
@@ -185,6 +200,11 @@ const Users = () => {
                            user.role === 'tecnico' ? 'Técnico' : 
                            'Usuario'}
                         </Badge>
+                      </td>
+                      <td>
+                        <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>
+                          <Trash size={18} />
+                        </Button>
                       </td>
                     </tr>
                   ))}

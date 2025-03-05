@@ -14,7 +14,6 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    // You can add any request modifications here
     return config;
   },
   (error) => {
@@ -28,12 +27,10 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle common errors
     const status = error.response?.status;
     
     if (status === 401) {
       toast.error('Session expired. Please login again.');
-      // Redirect to login page if needed
       window.location.href = '/login';
     } else if (status === 403) {
       toast.error('You do not have permission to perform this action.');
@@ -60,7 +57,8 @@ export const authService = {
 // User Services
 export const userService = {
   getAllUsers: () => api.get('/users'),
-  createUser: (userData) => api.post('/users', userData)
+  createUser: (userData) => api.post('/users', userData),
+  deleteUser: (id) => api.delete(`/users/${id}`) // Agregar la función deleteUser
 };
 
 // Incident Services

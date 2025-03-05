@@ -6,6 +6,9 @@ const sessionMiddleware = require("../middlewares/session.middleware");
 // Ruta para crear un usuario
 router.post("/", usersController.register);
 
+// Ruta para eliminar un usuario
+router.delete("/:id", usersController.deleteUser);
+
 // Ruta para obtener el perfil del usuario
 router.get("/me", sessionMiddleware, usersController.profile);
 

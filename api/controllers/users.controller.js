@@ -1,7 +1,21 @@
 const createError = require("http-errors");
 const User = require("../models/user.model");
 
+module.exports.deleteUser = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    res.status(200).json({ message: "Usuario eliminado exitosamente" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.getAllUsers = async (req, res, next) => {
+
   try {
     const users = await User.find(); // Retrieve all users from the database
     res.status(200).json(users); // Return the list of users
