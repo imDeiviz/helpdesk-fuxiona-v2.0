@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext'; // Importar el contexto de autenticación
+
 import { Container, Row, Col, Card, Badge, Button, Form, Modal, ListGroup } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { incidentService } from '../services/api';
@@ -19,6 +21,8 @@ import {
 import { PRIORITY_OPTIONS } from '../config/constants';
 
 const IncidentDetail = () => {
+  const { user } = useAuth(); // Obtener el usuario del contexto de autenticación
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [incident, setIncident] = useState(null);
@@ -216,24 +220,29 @@ const IncidentDetail = () => {
             </>
           ) : (
             <>
-              <Button 
-                variant="primary" 
-                className="me-2" 
-                onClick={handleEditToggle}
-              >
-                <Edit size={18} className="me-1" />
-                Editar
-              </Button>
-              <Button 
-                variant="danger" 
-                onClick={() => setShowDeleteModal(true)}
-              >
-                <Trash2 size={18} className="me-1" />
-                Eliminar
-              </Button>
+              {user.role !== 'user' && ( // Condición para mostrar botones solo si el rol no es "user"
+                <>
+                  <Button 
+                    variant="primary" 
+                    className="me-2" 
+                    onClick={handleEditToggle}
+                  >
+                    <Edit size={18} className="me-1" />
+                    Editar
+                  </Button>
+                  <Button 
+                    variant="danger" 
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    <Trash2 size={18} className="me-1" />
+                    Eliminar
+                  </Button>
+                </>
+              )}
             </>
           )}
         </div>
+
       </div>
 
       <Row className="g-4">
