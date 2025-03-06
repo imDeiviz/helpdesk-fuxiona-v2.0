@@ -11,12 +11,19 @@ import {
   FileText,
   BarChart3
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie } from 'recharts';
+
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusStats, setStatusStats] = useState({
+    pending: 0,
+    inProgress: 0,
+    resolved: 0
+  });
+
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
     total: 0,
@@ -43,6 +50,17 @@ const Dashboard = () => {
         const inProgress = response.data.filter(inc => inc.status === 'En Progreso').length;
         const resolved = response.data.filter(inc => inc.status === 'Resuelto').length;
         const activeIncidents = response.data.filter(inc => inc.status === 'Pendiente' || inc.status === 'En Progreso');
+
+        // Count by status
+        const pendingCount = response.data.filter(inc => inc.status === 'Pendiente').length;
+        const inProgressCount = response.data.filter(inc => inc.status === 'En Progreso').length;
+        const resolvedCount = response.data.filter(inc => inc.status === 'Resuelto').length;
+
+        setStatusStats({
+          pending: pendingCount,
+          inProgress: inProgressCount,
+          resolved: resolvedCount
+        });
 
         // Count by priority
         const byPriority = {
@@ -169,6 +187,35 @@ const Dashboard = () => {
 
       {/* Charts and Recent Incidents */}
       <Row className="g-4">
+        <Col lg={5}>
+          <Card className="border-0 shadow-sm h-100">
+            <Card.Body>
+              <h5 className="card-title mb-0">Incidencias por Estado</h5>
+              <div style={{ height: '300px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Pendientes', value: statusStats.pending, fill: '#fd7e14' },
+                        { name: 'En Progreso', value: statusStats.inProgress, fill: '#198754' },
+                        { name: 'Resueltas', value: statusStats.resolved, fill: '#dc3545' }
+                      ]}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#8884d8"
+                      label
+                    />
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+
         <Col lg={7}>
           <Card className="border-0 shadow-sm h-100">
             <Card.Body>
