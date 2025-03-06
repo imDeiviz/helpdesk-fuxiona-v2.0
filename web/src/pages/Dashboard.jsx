@@ -42,12 +42,13 @@ const Dashboard = () => {
         const pending = response.data.filter(inc => inc.status === 'Pendiente').length;
         const inProgress = response.data.filter(inc => inc.status === 'En Progreso').length;
         const resolved = response.data.filter(inc => inc.status === 'Resuelto').length;
-        
+        const activeIncidents = response.data.filter(inc => inc.status === 'Pendiente' || inc.status === 'En Progreso');
+
         // Count by priority
         const byPriority = {
-          Alta: response.data.filter(inc => inc.priority === 'Alta').length,
-          Media: response.data.filter(inc => inc.priority === 'Media').length,
-          Baja: response.data.filter(inc => inc.priority === 'Baja').length
+          Alta: activeIncidents.filter(inc => inc.priority === 'Alta').length,
+          Media: activeIncidents.filter(inc => inc.priority === 'Media').length,
+          Baja: activeIncidents.filter(inc => inc.priority === 'Baja').length
         };
         
         setStats({
