@@ -196,17 +196,21 @@ const Dashboard = () => {
                   <PieChart>
                     <Pie
                       data={[
-                        { name: 'Pendientes', value: statusStats.pending, fill: '#fd7e14' },
-                        { name: 'En Progreso', value: statusStats.inProgress, fill: '#198754' },
-                        { name: 'Resueltas', value: statusStats.resolved, fill: '#dc3545' }
+                        { name: 'Pendientes', value: (statusStats.pending / (statusStats.pending + statusStats.inProgress + statusStats.resolved)) * 100, fill: '#fd7e14' }, // Naranja
+                        { name: 'En Progreso', value: (statusStats.inProgress / (statusStats.pending + statusStats.inProgress + statusStats.resolved)) * 100, fill: '#007bff' }, // Azul
+                        { name: 'Resueltas', value: (statusStats.resolved / (statusStats.pending + statusStats.inProgress + statusStats.resolved)) * 100, fill: '#28a745' } // Verde
                       ]}
+
+
                       dataKey="value"
                       nameKey="name"
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
                       fill="#8884d8"
-                      label
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+
                     />
                     <Tooltip />
                   </PieChart>
