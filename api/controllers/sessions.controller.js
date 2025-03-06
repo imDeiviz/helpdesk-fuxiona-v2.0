@@ -20,7 +20,9 @@ module.exports.create = async (req, res, next) => {
 
     res.status(200).json({ message: "Inicio de sesión exitoso" });
   } catch (error) {
+    console.error('Error during login:', error); // Log the error for debugging
     res.status(500).json({ error: "Error interno del servidor" });
+
   }
 };
 

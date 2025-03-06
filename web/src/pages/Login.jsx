@@ -55,6 +55,7 @@ const Login = () => {
                   <Form.Control
                     type="email"
                     placeholder="Ingresa tu correo"
+                    autoComplete="username"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -70,6 +71,7 @@ const Login = () => {
                   <Form.Control
                     type="password"
                     placeholder="Ingresa tu contraseña"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

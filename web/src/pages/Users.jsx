@@ -174,39 +174,29 @@ const Users = () => {
             <div className="table-responsive">
               <Table hover className="mb-0">
                 <thead className="bg-light">
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Correo Electrónico</th>
-                    <th>Oficina</th>
-                    <th>Rol</th>
-                    <th>Acciones</th> {/* Nueva columna para acciones */}
-                  </tr>
+                  <tr><th>Nombre</th><th>Correo Electrónico</th><th>Oficina</th><th>Rol</th><th>Acciones</th></tr>
+
                 </thead>
                 <tbody>
                   {filteredUsers.map(user => (
-                    <tr key={user.id}>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.office}</td>
-                      <td>
-                        <Badge 
-                          bg={
-                            user.role === 'admin' ? 'danger' : 
-                            user.role === 'tecnico' ? 'info' : 
-                            'secondary'
-                          }
-                        >
-                          {user.role === 'admin' ? 'Administrador' : 
-                           user.role === 'tecnico' ? 'Técnico' : 
-                           'Usuario'}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>
-                          <Trash size={18} />
-                        </Button>
-                      </td>
-                    </tr>
+                    <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.office}</td><td>
+                      <Badge 
+                        bg={
+                          user.role === 'admin' ? 'danger' : 
+                          user.role === 'tecnico' ? 'info' : 
+                          'secondary'
+                        }
+                      >
+                        {user.role === 'admin' ? 'Administrador' : 
+                         user.role === 'tecnico' ? 'Técnico' : 
+                         'Usuario'}
+                      </Badge>
+                    </td><td>
+                      <Button variant="danger" onClick={() => handleDeleteUser(user.id)}>
+                        <Trash size={18} />
+                      </Button>
+                    </td></tr>
+
                   ))}
                 </tbody>
               </Table>
