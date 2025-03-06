@@ -200,19 +200,17 @@ const Dashboard = () => {
                         { name: 'En Progreso', value: (statusStats.inProgress / (statusStats.pending + statusStats.inProgress + statusStats.resolved)) * 100, fill: '#007bff' }, // Azul
                         { name: 'Resueltas', value: (statusStats.resolved / (statusStats.pending + statusStats.inProgress + statusStats.resolved)) * 100, fill: '#28a745' } // Verde
                       ]}
-
-
                       dataKey="value"
                       nameKey="name"
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
                       fill="#8884d8"
-                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      label={({ percent }) => `${(percent * 100).toFixed(2)}%`}
                       labelLine={false}
 
                     />
-                    <Tooltip />
+                    <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
