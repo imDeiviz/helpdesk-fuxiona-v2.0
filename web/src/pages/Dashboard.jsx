@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { incidentService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
   FileText,
   BarChart3
 } from 'lucide-react';
@@ -43,7 +43,7 @@ const Dashboard = () => {
         setLoading(true);
         const response = await incidentService.getAllIncidents();
         setIncidents(response.data);
-        
+
         // Calculate stats
         const total = response.data.length;
         const pending = response.data.filter(inc => inc.status === 'Pendiente').length;
@@ -68,7 +68,7 @@ const Dashboard = () => {
           Media: activeIncidents.filter(inc => inc.priority === 'Media').length,
           Baja: activeIncidents.filter(inc => inc.priority === 'Baja').length
         };
-        
+
         setStats({
           total,
           pending,
@@ -76,7 +76,7 @@ const Dashboard = () => {
           resolved,
           byPriority
         });
-        
+
       } catch (err) {
         console.error('Error fetching incidents:', err);
         setError('Error al cargar las incidencias. Por favor, intenta de nuevo más tarde.');
@@ -95,8 +95,9 @@ const Dashboard = () => {
     { name: 'Baja', value: stats.byPriority.Baja, fill: '#198754' }
   ];
 
-  // Recent incidents (last 5)
-  const recentIncidents = incidents.slice(0, 5);
+  const recentIncidents = incidents
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt descending
+    .slice(0, 5);
 
   if (loading) {
     return (
@@ -141,7 +142,7 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-        
+
         <Col md={6} lg={3}>
           <Card className="h-100 border-0 shadow-sm stat-card">
             <Card.Body className="d-flex align-items-center">
@@ -155,7 +156,7 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-        
+
         <Col md={6} lg={3}>
           <Card className="h-100 border-0 shadow-sm stat-card">
             <Card.Body className="d-flex align-items-center">
@@ -169,7 +170,7 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-        
+
         <Col md={6} lg={3}>
           <Card className="h-100 border-0 shadow-sm stat-card">
             <Card.Body className="d-flex align-items-center">
@@ -227,7 +228,7 @@ const Dashboard = () => {
                   Incidencias por Prioridad
                 </h5>
               </div>
-              
+
               <div style={{ height: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -242,7 +243,7 @@ const Dashboard = () => {
             </Card.Body>
           </Card>
         </Col>
-        
+
         <Col lg={5}>
           <Card className="border-0 shadow-sm h-100">
             <Card.Body>
@@ -250,12 +251,12 @@ const Dashboard = () => {
                 <h5 className="card-title mb-0">Incidencias Recientes</h5>
                 <Link to="/incidents" className="btn btn-sm btn-outline-primary">Ver todas</Link>
               </div>
-              
+
               {recentIncidents.length > 0 ? (
                 <div className="list-group list-group-flush">
                   {recentIncidents.map(incident => (
-                    <Link 
-                      key={incident._id} 
+                    <Link
+                      key={incident._id}
                       to={`/incidents/${incident._id}`}
                       className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 py-3 border-bottom"
                     >
@@ -265,11 +266,11 @@ const Dashboard = () => {
                           {new Date(incident.createdAt).toLocaleDateString()} - {incident.office}
                         </small>
                       </div>
-                      <Badge 
+                      <Badge
                         bg={
-                          incident.priority === 'Alta' ? 'danger' : 
-                          incident.priority === 'Media' ? 'warning' : 
-                          'success'
+                          incident.priority === 'Alta' ? 'danger' :
+                            incident.priority === 'Media' ? 'warning' :
+                              'success'
                         }
                       >
                         {incident.priority}
