@@ -72,15 +72,24 @@ const Incidents = () => {
     }
 
     // Filter by date range
-    if (filters.startDate) {
-      result = result.filter(incident =>
-        new Date(incident.createdAt) >= new Date(filters.startDate)
-      );
-    }
+    if (filters.startDate && filters.endDate) {
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      if (startDate.toDateString() === endDate.toDateString()) {
+        result = result.filter(incident =>
+          new Date(incident.createdAt).toDateString() === startDate.toDateString()
+        );
+      } else {
+        result = result.filter(incident => {
+          const incidentDate = new Date(incident.createdAt);
+          return incidentDate >= startDate && incidentDate <= endDate;
+        });
+      }
 
-    if (filters.endDate) {
+    } else if (filters.startDate) {
       result = result.filter(incident =>
-        new Date(incident.createdAt) <= new Date(filters.endDate)
+        new Date(incident.createdAt).toDateString() === new Date(filters.startDate).toDateString()
       );
     }
 
@@ -111,7 +120,9 @@ const Incidents = () => {
     setFilters({
       priority: '',
       office: '',
-      status: ''
+      status: '',
+      startDate: '',
+      endDate: ''
     });
     setSearchTerm('');
   };
