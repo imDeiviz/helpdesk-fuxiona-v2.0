@@ -15,7 +15,9 @@ const Incidents = () => {
   const [filters, setFilters] = useState({
     priority: '',
     office: '',
-    status: ''
+    status: '',
+    startDate: '',
+    endDate: ''
   });
 
   useEffect(() => {
@@ -43,32 +45,47 @@ const Incidents = () => {
   useEffect(() => {
     // Apply filters and search
     let result = incidents;
-    
+
     // Apply search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(incident => 
-        incident.title.toLowerCase().includes(term) || 
+      result = result.filter(incident =>
+        incident.title.toLowerCase().includes(term) ||
         incident.description.toLowerCase().includes(term) ||
         incident.name.toLowerCase().includes(term) ||
         incident.email.toLowerCase().includes(term)
       );
     }
-    
-    // Apply filters
+
+    // Apply filters and date range
+
     if (filters.priority) {
       result = result.filter(incident => incident.priority === filters.priority);
     }
-    
+
     if (filters.office) {
       result = result.filter(incident => incident.office === filters.office);
     }
-    
+
     if (filters.status) {
       result = result.filter(incident => incident.status === filters.status);
     }
-    
+
+    // Filter by date range
+    if (filters.startDate) {
+      result = result.filter(incident =>
+        new Date(incident.createdAt) >= new Date(filters.startDate)
+      );
+    }
+
+    if (filters.endDate) {
+      result = result.filter(incident =>
+        new Date(incident.createdAt) <= new Date(filters.endDate)
+      );
+    }
+
     setFilteredIncidents(result); // Ensure we set the filtered incidents correctly
+
 
   }, [searchTerm, filters, incidents]);
 
@@ -148,12 +165,12 @@ const Incidents = () => {
                 />
               </InputGroup>
             </Col>
-            
+
             <Col md={6} lg={8}>
               <div className="d-flex gap-2 flex-wrap">
-                <Form.Select 
-                  name="priority" 
-                  value={filters.priority} 
+                <Form.Select
+                  name="priority"
+                  value={filters.priority}
                   onChange={handleFilterChange}
                   className="w-auto"
                 >
@@ -164,10 +181,10 @@ const Incidents = () => {
                     </option>
                   ))}
                 </Form.Select>
-                
-                <Form.Select 
-                  name="office" 
-                  value={filters.office} 
+
+                <Form.Select
+                  name="office"
+                  value={filters.office}
                   onChange={handleFilterChange}
                   className="w-auto"
                 >
@@ -178,10 +195,10 @@ const Incidents = () => {
                     </option>
                   ))}
                 </Form.Select>
-                
-                <Form.Select 
-                  name="status" 
-                  value={filters.status} 
+
+                <Form.Select
+                  name="status"
+                  value={filters.status}
                   onChange={handleFilterChange}
                   className="w-auto"
                 >
@@ -190,8 +207,28 @@ const Incidents = () => {
                   <option value="En Progreso">En Progreso</option>
                   <option value="Resuelto">Resuelto</option>
                 </Form.Select>
-                
+
+                <Form.Group className="w-auto">
+                  <Form.Label>Desde</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="startDate"
+                    value={filters.startDate}
+                    onChange={handleFilterChange}
+                  />
+                </Form.Group>
+                <Form.Group className="w-auto">
+                  <Form.Label>Hasta</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="endDate"
+                    value={filters.endDate}
+                    onChange={handleFilterChange}
+                  />
+                </Form.Group>
+
                 <Button variant="outline-secondary" onClick={clearFilters}>
+
                   Limpiar
                 </Button>
               </div>
@@ -228,30 +265,30 @@ const Incidents = () => {
                       <td>{incident.name}</td>
                       <td>{new Date(incident.createdAt).toLocaleDateString()}</td>
                       <td>
-                        <Badge 
+                        <Badge
                           bg={
-                            incident.priority === 'Alta' ? 'danger' : 
-                            incident.priority === 'Media' ? 'warning' : 
-                            'success'
+                            incident.priority === 'Alta' ? 'danger' :
+                              incident.priority === 'Media' ? 'warning' :
+                                'success'
                           }
                         >
                           {incident.priority}
                         </Badge>
                       </td>
                       <td onClick={() => handleStatusChange(incident._id, 'En Progreso')}>
-                        <Badge 
+                        <Badge
                           bg={
-                            incident.status === 'Pendiente' ? 'secondary' : 
-                            incident.status === 'En Progreso' ? 'info' : 
-                            'success'
+                            incident.status === 'Pendiente' ? 'secondary' :
+                              incident.status === 'En Progreso' ? 'info' :
+                                'success'
                           }
                         >
                           {incident.status || 'Pendiente'}
                         </Badge>
                       </td>
                       <td>
-                        <Link 
-                          to={`/incidents/${incident._id}`} 
+                        <Link
+                          to={`/incidents/${incident._id}`}
                           className="btn btn-sm btn-outline-primary"
                         >
                           Ver
