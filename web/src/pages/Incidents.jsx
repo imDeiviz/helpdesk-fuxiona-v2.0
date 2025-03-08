@@ -75,17 +75,23 @@ const Incidents = () => {
     if (filters.startDate && filters.endDate) {
       const startDate = new Date(filters.startDate);
       const endDate = new Date(filters.endDate);
-      
-      if (startDate.toDateString() === endDate.toDateString()) {
-        result = result.filter(incident =>
-          new Date(incident.createdAt).toDateString() === startDate.toDateString()
+
+      result = result.filter(incident => {
+        const incidentDate = new Date(incident.createdAt);
+        return (
+          incidentDate.toDateString() === startDate.toDateString() ||
+          incidentDate.toDateString() === endDate.toDateString() ||
+          (incidentDate >= startDate && incidentDate <= endDate)
         );
-      } else {
-        result = result.filter(incident => {
-          const incidentDate = new Date(incident.createdAt);
-          return incidentDate >= startDate && incidentDate <= endDate;
-        });
-      }
+      });
+
+      // Ensure the start and end dates are inclusive
+      result = result.filter(incident => {
+        const incidentDate = new Date(incident.createdAt);
+        return incidentDate.toDateString() === startDate.toDateString() ||
+          incidentDate.toDateString() === endDate.toDateString() ||
+          (incidentDate >= startDate && incidentDate <= endDate);
+      });
 
     } else if (filters.startDate) {
       result = result.filter(incident =>
