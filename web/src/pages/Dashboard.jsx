@@ -46,9 +46,16 @@ const Dashboard = () => {
 
         // Calculate stats
         const total = response.data.length;
+        const isCurrentMonth = (date) => {
+          const incidentDate = new Date(date);
+          const currentDate = new Date();
+          return incidentDate.getMonth() === currentDate.getMonth() && incidentDate.getFullYear() === currentDate.getFullYear();
+        };
+
         const pending = response.data.filter(inc => inc.status === 'Pendiente').length;
         const inProgress = response.data.filter(inc => inc.status === 'En Progreso').length;
-        const resolved = response.data.filter(inc => inc.status === 'Resuelto').length;
+        const resolved = response.data.filter(inc => inc.status === 'Resuelto' && isCurrentMonth(inc.createdAt)).length;
+        const excludedResolved = response.data.filter(inc => inc.status !== 'Resuelto' && !isCurrentMonth(inc.createdAt)).length;
         const activeIncidents = response.data.filter(inc => inc.status === 'Pendiente' || inc.status === 'En Progreso');
 
         // Count by status
@@ -59,7 +66,7 @@ const Dashboard = () => {
         setStatusStats({
           pending: pendingCount,
           inProgress: inProgressCount,
-          resolved: resolvedCount
+          resolved: resolvedCount + excludedResolved
         });
 
         // Count by priority
