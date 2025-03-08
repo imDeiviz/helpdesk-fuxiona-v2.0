@@ -191,7 +191,10 @@ const Dashboard = () => {
         <Col lg={5}>
           <Card className="border-0 shadow-sm h-100">
             <Card.Body>
-              <h5 className="card-title mb-0">Incidencias por Estado</h5>
+              <h5 className="card-title mb-0">
+                <BarChart3 size={20} className="me-2" />
+                Incidencias por Estado
+              </h5>
               <div style={{ height: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
