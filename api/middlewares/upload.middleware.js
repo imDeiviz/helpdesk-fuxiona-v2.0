@@ -2,14 +2,14 @@ const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
 
-// Configurar Cloudinary con las credenciales del entorno
+ // Configurar Cloudinary con las credenciales del entorno
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configurar el almacenamiento en Cloudinary
+ // Configurar el almacenamiento en Cloudinary
 const storage = new CloudinaryStorage({
   params: (req, file) => {
     const params = {
@@ -46,7 +46,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
 });
 
-// Crear el middleware multer con el storage de Cloudinary
+ // Crear el middleware multer con el storage de Cloudinary
 const fileFilter = (req, file, cb) => {
   const allowedExtensions = [
     "jpg",

@@ -103,7 +103,7 @@ const Dashboard = () => {
   ];
 
   const recentIncidents = incidents
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort by createdAt descending
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) 
     .slice(0, 5);
 
   if (loading) {

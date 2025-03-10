@@ -32,7 +32,7 @@ const Layout = () => {
             <Sidebar isOpen={sidebarOpen} />
           </Col>
           
-          {/* Main Content */}
+          {/* Contenido Main */}
           <Col 
             md={sidebarOpen ? 9 : 11} 
             lg={sidebarOpen ? 10 : 11} 

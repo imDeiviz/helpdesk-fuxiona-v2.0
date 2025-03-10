@@ -49,7 +49,6 @@ const CreateIncident = () => {
       data.append('description', formData.description);
       data.append('priority', formData.priority);
       
-      // Append files if any
       if (files.length > 0) {
         files.forEach(file => {
           data.append('files', file);

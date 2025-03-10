@@ -27,7 +27,8 @@ module.exports.getAll = async (req, res, next) => {
 
     res.status(200).json(incidents); 
   } catch (error) {
-    next(createError(500, "Error retrieving incidents"));
+    next(createError(500, "Error al recuperar las incidencias"));
+
   }
 };
 
@@ -80,7 +81,8 @@ module.exports.create = async (req, res, next) => {
     await newIncident.save().catch(err => next(createError(500, "Error al crear la incidencia")));
 
     res.status(201).json({
-      message: "Incident created successfully",
+      message: "Incidencia creada con éxito",
+
       incident: newIncident,
       id: newIncident._id,
     });

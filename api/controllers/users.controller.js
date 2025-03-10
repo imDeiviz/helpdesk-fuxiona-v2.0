@@ -28,13 +28,12 @@ module.exports.create = async (req, res, next) => {
   try {
     const { name, email, password, office } = req.body;
 
-    // Validar que se proporcionen name, email, password y office
+ // Validar que se proporcionen name, email, password y office
     if (!name || !email || !password || !office) {
       return next(createError(400, "Name, email, password y office son requeridos"));
     }
 
-
-    // Crear un nuevo usuario
+ // Crear un nuevo usuario
     const newUser = new User({ name, email, password, office });
     await newUser.save().catch(err => next(createError(500, "Error al crear el usuario")));
 
@@ -48,14 +47,13 @@ module.exports.create = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
     const { name, email, password, role, office } = req.body;
 
-    // Validar que el rol sea uno de los predefinidos
+ // Validar que el rol sea uno de los predefinidos
     const validRoles = ["user", "admin", "tecnico"];
     if (!validRoles.includes(role)) {
         return next(createError(400, "El rol no es válido"));
     }
 
-
-    // Validar que la oficina sea una de las predefinidas
+ // Validar que la oficina sea una de las predefinidas
     const validOffices = ["Malaga", "El Palo", "Fuengirola"];
     if (!validOffices.includes(office)) {
         return next(createError(400, "La oficina no es válida"));
@@ -100,6 +98,6 @@ module.exports.getProfile = (req, res, next) => {
 };
 
 exports.user = (req, res) => {
-  // Your logic for handling the user creation
+ // Tu lógica para manejar la creación de usuarios
   res.send("User created");
 };

@@ -7,7 +7,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
-/* DB init */
+/* Inicialización de la base de datos */
 require("./config/db.config");
 
 const app = express();
@@ -31,8 +31,7 @@ app.use(
   })
 );
 
-
-/* Conectar a MongoDB */
+/* Conexión a MongoDB */
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -46,7 +45,7 @@ mongoose
 /* Servir archivos estáticos */
 app.use("/uploads", express.static("uploads"));
 
-/* API Routes Configuration */
+/* Configuración de las rutas de la API */
 const routesConfig = require("./config/routes.config");
 
 app.use("/api/v1", routesConfig);

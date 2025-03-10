@@ -12,12 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Initialize auth state from localStorage
+  // inicializar el usuario
   useEffect(() => {
     const checkLoggedIn = async () => {
       try {
         setLoading(true);
-        // Check if user is logged in by fetching profile
+        // comprobar si el usuario esta autenticado
         const response = await axios.get(`${API_URL}/users/me`, {
           withCredentials: true
         });
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, []);
 
-  // Login function
+  // Funcion de login
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
       });
       
       if (response.status === 200) {
-        // Fetch user profile after successful login
+        // Fetch datos del usuario
         const userResponse = await axios.get(`${API_URL}/users/me`, {
           withCredentials: true
         });
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function
+  // Funcion de logout
   const logout = async () => {
     try {
       setLoading(true);
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register function
+  // Funcion de registro
   const register = async (userData) => {
     try {
       setLoading(true);
