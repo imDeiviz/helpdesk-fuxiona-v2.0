@@ -15,7 +15,6 @@ module.exports.deleteUser = async (req, res, next) => {
 };
 
 module.exports.getAllUsers = async (req, res, next) => {
-
   try {
     const users = await User.find(); // Retrieve all users from the database
     res.status(200).json(users); // Return the list of users
@@ -33,11 +32,9 @@ module.exports.create = async (req, res, next) => {
       return next(createError(400, "Name, email, password y office son requeridos"));
     }
 
-
     // Crear un nuevo usuario
     const newUser = new User({ name, email, password, office });
     await newUser.save().catch(err => next(createError(500, "Error al crear el usuario")));
-
 
     res.status(201).json({ message: "Usuario creado exitosamente" });
   } catch (error) {
@@ -46,21 +43,19 @@ module.exports.create = async (req, res, next) => {
 };
 
 module.exports.register = async (req, res, next) => {
-    const { name, email, password, role, office } = req.body;
+  const { name, email, password, role, office } = req.body;
 
-    // Validar que el rol sea uno de los predefinidos
-    const validRoles = ["user", "admin", "tecnico"];
-    if (!validRoles.includes(role)) {
-        return next(createError(400, "El rol no es válido"));
-    }
+  // Validar que el rol sea uno de los predefinidos
+  const validRoles = ["user", "admin", "tecnico"];
+  if (!validRoles.includes(role)) {
+    return next(createError(400, "El rol no es válido"));
+  }
 
-
-    // Validar que la oficina sea una de las predefinidas
-    const validOffices = ["Malaga", "El Palo", "Fuengirola"];
-    if (!validOffices.includes(office)) {
-        return next(createError(400, "La oficina no es válida"));
-    }
-
+  // Validar que la oficina sea una de las predefinidas
+  const validOffices = ["Malaga", "El Palo", "Fuengirola"];
+  if (!validOffices.includes(office)) {
+    return next(createError(400, "La oficina no es válida"));
+  }
 
   try {
     const user = await User.create({ name, email, password, role, office });
@@ -89,7 +84,6 @@ module.exports.profile = (req, res, next) => {
         email: user.email,
         office: user.office, // Include office in the profile response
         role: user.role, // Include role in the profile response
-
       });
     })
     .catch((err) => next(err));
@@ -97,6 +91,29 @@ module.exports.profile = (req, res, next) => {
 
 module.exports.getProfile = (req, res, next) => {
   res.status(200).json(req.user);
+};
+
+module.exports.changePassword = async (req, res, next) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const isMatch = await user.checkPassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+    }
+
+    user.password = newPassword; // La nueva contraseña se asigna
+    await user.save(); // Guardar el usuario con la nueva contraseña
+
+    res.status(200).json({ message: "Contraseña actualizada exitosamente" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.user = (req, res) => {

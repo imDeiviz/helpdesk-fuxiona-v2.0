@@ -12,6 +12,9 @@ router.delete("/:id", usersController.deleteUser);
 // Ruta para obtener el perfil del usuario
 router.get("/me", sessionMiddleware, usersController.profile);
 
+// Ruta para cambiar la contraseña del usuario
+router.patch("/change-password", sessionMiddleware, usersController.changePassword); 
+
 // Ruta para obtener todos los usuarios
 router.get("/", usersController.getAllUsers);
 
