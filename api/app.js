@@ -4,6 +4,8 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("./middlewares/cors.middleware");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
@@ -21,16 +23,16 @@ app.use(cookieParser());
 /* Configuración de la sesión */
 app.use(
   session({
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-      secure: false, // Asegúrate de que 'secure' esté en 'false' si estás desarrollando en localhost sin HTTPS
-      maxAge: null // La sesión no expirará hasta que se cierre el navegador
+    cookie: {
+      secure: false, // Cambiar a true en producción si se usa HTTPS
+      maxAge: 24 * 60 * 60 * 1000 // La sesión expirará después de 24 horas
     }
   })
 );
-
 
 /* Conectar a MongoDB */
 mongoose
@@ -55,12 +57,12 @@ app.use("/api/v1", routesConfig);
 app.use((err, req, res, next) => {
   console.error(err); // Registrar el error para facilitar la depuración
   res.status(err.status || 500).json({
-    message: err.message || "Error interno del servidor",
+    message: "Error interno del servidor", // No exponer detalles del error
   });
 });
 
 const port = Number(process.env.PORT || 3000);
 
-app.listen(port, () => console.info(`Application running at a correct port`));
+app.listen(port, () => console.info(`Application running at port ${port}`));
 
 module.exports = app;

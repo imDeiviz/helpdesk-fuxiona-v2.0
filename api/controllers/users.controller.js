@@ -52,7 +52,8 @@ module.exports.register = async (req, res, next) => {
   }
 
   // Validar que la oficina sea una de las predefinidas
-  const validOffices = ["Malaga", "El Palo", "Fuengirola"];
+  const validOffices = ["Malaga", "Marbella", "Fuengirola"];
+
   if (!validOffices.includes(office)) {
     return next(createError(400, "La oficina no es válida"));
   }

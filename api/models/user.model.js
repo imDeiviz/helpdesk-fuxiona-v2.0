@@ -37,7 +37,8 @@ const userSchema = new mongoose.Schema(
     office: {
       type: String,
       required: [true, "Office is required"],
-      enum: ["Malaga", "El Palo", "Fuengirola"],
+      enum: ["Malaga", "Marbella", "Fuengirola"],
+
     },
 
   },

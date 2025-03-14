@@ -4,7 +4,8 @@ export const API_URL = 'http://localhost:3000/api/v1';
 // Office Options
 export const OFFICE_OPTIONS = [
   { value: 'Malaga', label: 'Málaga' },
-  { value: 'El Palo', label: 'El Palo' },
+  { value: 'Marbella', label: 'Marbella' },
+
   { value: 'Fuengirola', label: 'Fuengirola' }
 ];
 
