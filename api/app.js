@@ -61,7 +61,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 3000); // Cambiar a 80 en producción
+
 
 app.listen(port, () => console.info(`Application running at port ${port}`));
 
