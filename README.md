@@ -62,6 +62,46 @@ api/
 ```
 
 ## Documentación de Archivos
+
+### CreateIncident.jsx
+- **Descripción**: Este componente permite a los usuarios crear una nueva incidencia. Incluye un formulario que solicita un título, una descripción, una prioridad y la opción de adjuntar archivos.
+- **Funcionalidades**:
+  - Validación de campos obligatorios (título y descripción).
+  - Manejo de archivos adjuntos con soporte para múltiples formatos.
+  - Navegación a la lista de incidencias después de la creación exitosa.
+
+### incidents.controller.js
+- **Descripción**: Este controlador maneja las operaciones relacionadas con las incidencias, incluyendo la creación, obtención, actualización y eliminación de incidencias.
+- **Funcionalidades**:
+  - `getAll`: Recupera todas las incidencias o solo las de la oficina del usuario autenticado, dependiendo de su rol.
+  - `create`: Crea una nueva incidencia, validando que se proporcionen un título y una descripción, y permite la carga de archivos.
+  - `removeFile`: Elimina un archivo adjunto de una incidencia.
+  - `addFiles`: Añade archivos a una incidencia existente.
+  - `downloadFile`: Permite descargar un archivo adjunto de una incidencia.
+  - `getDetail`: Recupera los detalles de una incidencia específica, verificando los permisos del usuario.
+  - `update`: Actualiza los campos de una incidencia existente.
+  - `delete`: Elimina una incidencia y sus archivos adjuntos de Cloudinary.
+
+### IncidentDetail.jsx
+- **Descripción**: Este componente muestra los detalles de una incidencia específica, permitiendo a los usuarios editar la incidencia, eliminarla o subir archivos adjuntos.
+- **Funcionalidades**:
+  - Carga de los detalles de la incidencia al montarse el componente.
+  - Permite editar el título, la descripción, la prioridad y el estado de la incidencia.
+  - Opción para eliminar la incidencia y sus archivos adjuntos.
+  - Opción para subir nuevos archivos adjuntos a la incidencia existente.
+  - Manejo de errores y estados de carga para mejorar la experiencia del usuario.
+
+### incidents.routes.js
+- **Descripción**: Este archivo define las rutas para la gestión de incidencias en la API.
+- **Rutas**:
+  - `GET /`: Recupera todas las incidencias (solo para usuarios autenticados).
+  - `POST /`: Crea una nueva incidencia, permitiendo la carga de archivos adjuntos (solo para usuarios autenticados).
+  - `PATCH /:id/files`: Añade archivos a una incidencia existente (solo para usuarios autenticados).
+  - `DELETE /:id/files`: Elimina un archivo adjunto de una incidencia (solo para usuarios autenticados).
+  - `GET /:id`: Recupera los detalles de una incidencia específica (solo para usuarios autenticados).
+  - `PATCH /:id`: Actualiza una incidencia existente (solo para usuarios autenticados y con verificación de rol).
+  - `DELETE /:id`: Elimina una incidencia (solo para usuarios autenticados).
+
 - **app.js**: Archivo principal que configura y arranca el servidor Express.
 - **config/**: Contiene archivos de configuración para la base de datos y rutas.
 - **controllers/**: Contiene la lógica de negocio para manejar las solicitudes y respuestas de la API.

@@ -4,6 +4,11 @@ FROM node:18
 # Crear un directorio de trabajo
 WORKDIR /usr/src/app
 
+COPY package*.json ./
+
+# Instalar las dependencias
+RUN npm install
+
 # Copiar los archivos de la API
 COPY api/package*.json ./api/
 # Instalar las dependencias de la API
