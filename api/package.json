@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "node --watch app.js",
     "start": "node app.js",
-    "build": "echo 'Build script not defined'"
-
+    "build": "npm run build --prefix web"
   },
   "keywords": [],
   "author": "",
