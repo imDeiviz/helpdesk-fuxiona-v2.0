@@ -1,28 +1,30 @@
-# Usa una imagen base de Node.js
-FROM node:20.19
+# Usar la imagen base de Node.js
+FROM node:18
 
-# Establece el directorio de trabajo
-WORKDIR /app
+# Crear un directorio de trabajo
+WORKDIR /usr/src/app
 
-# Copia los archivos de package.json y package-lock.json
-COPY api/package.json api/package-lock.json ./api/
-COPY web/package.json web/package-lock.json ./web/
+COPY package*.json ./
 
-# Instala las dependencias del backend
-RUN cd api && npm install
+# Instalar las dependencias
+RUN npm install
 
-# Copia el resto de los archivos de la aplicación
-COPY api ./api
-COPY web ./web
+# Copiar los archivos de la API
+COPY api/package*.json ./api/
+# Instalar las dependencias de la API
+RUN npm install --prefix ./api
 
-# Instala las dependencias del frontend
-RUN cd web && npm install
+# Copiar los archivos de la aplicación web
+COPY web/package*.json ./web/
+# Instalar las dependencias de la aplicación web
+RUN npm install --prefix ./web
 
-# Construye el frontend
-RUN cd web && npm run build
+# Copiar el resto del código de la API y la aplicación web
+COPY api/ ./api/
+COPY web/ ./web/
 
-# Expone el puerto en el que la aplicación se ejecutará
-EXPOSE 3000
+# Exponer los puertos necesarios
+EXPOSE 3000 5173
 
-# Comando para iniciar la aplicación
-CMD ["node", "api/app.js"]
+# Comando para iniciar la API
+CMD ["npm", "run", "dev", "--prefix", "api"]

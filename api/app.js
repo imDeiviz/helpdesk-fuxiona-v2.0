@@ -74,7 +74,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = Number(process.env.PORT || 80); // Cambiar a 80 en producción
+const port = Number(process.env.PORT || 3001); // Cambiar a 3001 como valor predeterminado
+
 
 app.listen(port, () => console.info(`Application running at port ${port}`));
 
