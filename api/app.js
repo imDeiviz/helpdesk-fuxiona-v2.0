@@ -23,7 +23,10 @@ app.use(cookieParser());
 /* Configuración de la sesión */
 app.use(
   session({
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      // Otras opciones si son necesarias
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
