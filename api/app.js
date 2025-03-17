@@ -49,6 +49,11 @@ mongoose
 
 /* Servir archivos estáticos */
 app.use(express.static("dist")); // Servir archivos estáticos de la carpeta dist
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' data:;");
+  next();
+});
+
 app.use("/uploads", express.static("uploads"));
 
 const path = require("path"); // Importar el módulo path
