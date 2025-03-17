@@ -1,0 +1,11 @@
+# flyctl launch added from api\.gitignore
+api\**\node_modules
+api\**\dist
+api\**\.env
+api\**\.env.template
+
+# flyctl launch added from web\.gitignore
+web\**\node_modules
+web\**\dist
+web\**\.env
+fly.toml
