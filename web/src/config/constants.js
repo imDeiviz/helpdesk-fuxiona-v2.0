@@ -1,5 +1,6 @@
 // API Configuration
-export const API_URL = 'http://localhost:3000/api/v1';
+export const API_URL = 'https://tu-api.fly.dev/api/v1';
+
 
 // Office Options
 export const OFFICE_OPTIONS = [

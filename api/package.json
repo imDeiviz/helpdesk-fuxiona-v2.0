@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node --watch app.js",
     "start": "node app.js",
-    "build": "npm run build --prefix web"
+    "build": "npm run build --prefix web",
+    "deploy": "echo 'Deploying to production...'" 
   },
   "keywords": [],
   "author": "",
