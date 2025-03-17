@@ -11,6 +11,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",

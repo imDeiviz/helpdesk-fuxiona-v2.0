@@ -5,8 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "chmod +x ./node_modules/.bin/vite",
-    "postinstall": "chmod +x ./node_modules/.bin/vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -24,11 +22,11 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
     "react-toastify": "^10.0.4",
-    "recharts": "^2.12.2"
+    "recharts": "^2.12.2",
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "vite": "^6.2.2"
-
   }
 }
