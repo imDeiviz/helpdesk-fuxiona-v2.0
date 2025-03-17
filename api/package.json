@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "node --watch app.js",
     "start": "node app.js",
-    "build": "npm run build --prefix web",
-    "deploy": "echo 'Deploying to production...'" 
+    "build": "npm run build --prefix ../web && npm run copy-dist",
+    "copy-dist": "copyfiles -u 1 web/dist/**/* api/",
+    "deploy": "echo 'Deploying to production...'"
   },
   "keywords": [],
   "author": "",
@@ -27,5 +28,8 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
   }
 }
