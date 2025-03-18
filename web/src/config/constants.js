@@ -1,5 +1,5 @@
 // API Configuration
-export const API_URL = process.env.VITE_API_URL || 'https://helpdesk-fuxiona-v2-0.onrender.com';
+export const API_URL = 'http://localhost:3000/api/v1';
 
 // Office Options
 export const OFFICE_OPTIONS = [

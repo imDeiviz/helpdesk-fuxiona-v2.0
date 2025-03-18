@@ -5,23 +5,17 @@
   "scripts": {
     "dev": "node --watch app.js",
     "start": "node app.js",
-    "build": "npm run build --prefix ../web && npm run copy-dist",
-    "copy-dist": "copyfiles -u 1 web/dist/**/* api/",
-    "deploy": "echo 'Deploying to production...'"
+    "build": "npm run build --prefix web"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "engines": {
-    "node": ">=22.14.0"
-  },
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.3",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
@@ -29,8 +23,5 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0"
-  },
-  "devDependencies": {
-    "copyfiles": "^2.4.1"
   }
 }

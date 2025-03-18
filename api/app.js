@@ -2,9 +2,10 @@ require("dotenv").config();
 
 const express = require("express");
 const logger = require("morgan");
-const cors = require("cors"); // Importar el middleware cors
+const cors = require("./middlewares/cors.middleware");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
@@ -16,21 +17,18 @@ const app = express();
 /* Middlewares */
 app.use(express.json());
 app.use(logger("dev"));
-app.use(cors()); // Usar el middleware cors
+app.use(cors);
 app.use(cookieParser());
 
 /* Configuración de la sesión */
 app.use(
   session({
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-      // Otras opciones si son necesarias
-    }),
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true, // Cambiar a true en producción si se usa HTTPS
+      secure: false, // Cambiar a true en producción si se usa HTTPS
       maxAge: 24 * 60 * 60 * 1000 // La sesión expirará después de 24 horas
     }
   })
@@ -49,11 +47,6 @@ mongoose
 
 /* Servir archivos estáticos */
 app.use(express.static("dist")); // Servir archivos estáticos de la carpeta dist
-app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' data:;");
-  next();
-});
-
 app.use("/uploads", express.static("uploads"));
 
 const path = require("path"); // Importar el módulo path
@@ -74,7 +67,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = Number(process.env.PORT || 3001); // Cambiar a 3001 como valor predeterminado
+const port = Number(process.env.PORT || 3000); // Cambiar a 80 en producción
 
 
 app.listen(port, () => console.info(`Application running at port ${port}`));
