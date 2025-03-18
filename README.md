@@ -117,7 +117,7 @@ api/
 
 #### 1. Crear una nueva incidencia
 - **Método**: POST
-- **URL**: `/incidents`
+- **URL**: `https://helpdesk-fuxiona-v2-0.onrender.com/api/v1/incidents`
 - **Cuerpo**:
   ```json
   {
@@ -200,7 +200,7 @@ api/
 
 #### 6. Iniciar sesión
 - **Método**: POST
-- **URL**: `/sessions`
+- **URL**: `https://helpdesk-fuxiona-v2-0.onrender.com/api/v1/sessions`
 - **Cuerpo**:
   ```json
   {
@@ -234,7 +234,7 @@ api/
 
 #### 8. Crear un nuevo usuario
 - **Método**: POST
-- **URL**: `/users`
+- **URL**: `https://helpdesk-fuxiona-v2-0.onrender.com/api/v1/users`
 - **Cuerpo**:
   ```json
   {

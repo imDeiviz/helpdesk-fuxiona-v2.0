@@ -28,7 +28,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // Cambiar a true en producción si se usa HTTPS
+    secure: true, // Cambiar a true en producción si se usa HTTPS
+
       maxAge: 24 * 60 * 60 * 1000 // La sesión expirará después de 24 horas
     }
   })
@@ -67,7 +68,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const port = Number(process.env.PORT || 3000); // Cambiar a 80 en producción
+const port = Number(process.env.PORT || 80); // Cambiar a 80 en producción
+
 
 
 app.listen(port, () => console.info(`Application running at port ${port}`));
