@@ -3,7 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path"); // Agregado para usar el módulo path
 const logger = require("morgan");
-const cors = require("./middlewares/cors.middleware");
+const cors = require("cors"); // Usar el paquete cors de npm
+
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
@@ -19,8 +20,10 @@ const app = express();
 app.use(express.json());
 app.use(logger("dev"));
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://helpdesk-fuxiona-v2-0.onrender.com'], // Permitir solicitudes desde localhost y el dominio de producción
+  origin: 'https://helpdesk-fuxiona-v2-0.onrender.com', // Permitir solicitudes desde el dominio de producción
+  credentials: true // Permitir credenciales
 }));
+
 
 app.use(cookieParser());
 
