@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix api\" \"npm run dev --prefix web\""
+    "dev": "concurrently \"npm run dev --prefix api\" \"npm run dev --prefix web\"",
+    "build": "npm run build --prefix web"
+
   },
   "dependencies": {
     "concurrently": "^7.6.0"
