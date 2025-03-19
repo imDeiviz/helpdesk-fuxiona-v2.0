@@ -16,6 +16,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'build', // Cambiar la carpeta de salida a build
     rollupOptions: {
       output: {
         manualChunks: (id) => {
