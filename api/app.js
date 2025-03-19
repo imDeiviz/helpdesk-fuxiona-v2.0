@@ -60,7 +60,9 @@ app.get("/", (req, res) => {
 
 });
 
+const routesConfig = require("./config/routes.config"); // Importar la configuración de rutas
 app.use("/api/v1", routesConfig);
+
 
 /* Manejo de errores */
 app.use((err, req, res, next) => {
