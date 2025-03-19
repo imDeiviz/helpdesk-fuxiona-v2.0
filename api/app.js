@@ -20,7 +20,8 @@ const app = express();
 app.use(express.json());
 app.use(logger("dev"));
 app.use(cors({
-  origin: 'https://helpdesk-fuxiona-v2-0.onrender.com', // Permitir solicitudes desde el dominio de producción
+  origin: ['https://helpdesk-fuxiona-v2-0.onrender.com', 'http://localhost:5173'], // Permitir solicitudes desde el dominio de producción y el entorno de desarrollo
+
   credentials: true // Permitir credenciales
 }));
 
